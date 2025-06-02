@@ -1,0 +1,3355 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GGOMES-LOG v2.0 | Sistema Avançado de Gestão Agrícola</title>
+    
+    <!-- Tailwind CSS via CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css">
+    
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <!-- jsPDF para relatórios -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://unpkg.com/jspdf-autotable@3.5.28/dist/jspdf.plugin.autotable.js"></script>
+    
+    <!-- Animate.css para animações -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+    
+    <script>
+    tailwind.config = {
+        darkMode: 'class',
+        theme: {
+            extend: {
+                colors: {
+                    primary: {
+                        50: '#f4f3ff',
+                        100: '#e9e8ff',
+                        200: '#d7d5ff',
+                        300: '#bab8ff',
+                        400: '#9a97ff',
+                        500: '#7c7aff',
+                        600: '#5D5CDE',
+                        700: '#5a55cc',
+                        800: '#4a46a8',
+                        900: '#383670',
+                        950: '#201f45',
+                    },
+                    accent: {
+                        50: '#fef7f0',
+                        100: '#fdead7',
+                        200: '#fad0a4',
+                        300: '#f7b071',
+                        400: '#f28b3e',
+                        500: '#ed6c02',
+                        600: '#d15502',
+                        700: '#b04002',
+                        800: '#8f3300',
+                        900: '#762a00',
+                    }
+                },
+                fontFamily: {
+                    'sans': ['Inter', 'system-ui', 'sans-serif'],
+                },
+                animation: {
+                    'slide-in': 'slideIn 0.3s ease-out',
+                    'fade-in': 'fadeIn 0.3s ease-out',
+                    'bounce-soft': 'bounceSoft 1s infinite',
+                    'pulse-soft': 'pulseSoft 2s infinite',
+                    'scale-up': 'scaleUp 0.2s ease-out',
+                }
+            }
+        }
+    }
+    </script>
+    
+    <style>
+        /* Animações customizadas */
+        @keyframes slideIn {
+            from { transform: translateX(-100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        @keyframes bounceSoft {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-5px); }
+        }
+        
+        @keyframes pulseSoft {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.05); opacity: 0.8; }
+        }
+        
+        @keyframes scaleUp {
+            from { transform: scale(0.95); }
+            to { transform: scale(1); }
+        }
+        
+        /* Scrollbars personalizados */
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.1);
+            border-radius: 3px;
+        }
+        
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: rgba(93, 92, 222, 0.5);
+            border-radius: 3px;
+        }
+        
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+            background: rgba(93, 92, 222, 0.7);
+        }
+        
+        /* Gradientes personalizados */
+        .gradient-primary {
+            background: linear-gradient(135deg, #5D5CDE 0%, #7c7aff 100%);
+        }
+        
+        .gradient-accent {
+            background: linear-gradient(135deg, #ed6c02 0%, #f28b3e 100%);
+        }
+        
+        /* Cards com efeito hover */
+        .card-hover {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .card-hover:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+        
+        /* Glassmorphism effect */
+        .glass {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .glass-dark {
+            background: rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        /* Loading spinner */
+        .spinner {
+            border: 3px solid rgba(93, 92, 222, 0.3);
+            border-radius: 50%;
+            border-top: 3px solid #5D5CDE;
+            width: 24px;
+            height: 24px;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        /* Tabs melhoradas */
+        .tab-modern {
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .tab-modern::before {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            width: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #5D5CDE, #7c7aff);
+            transition: all 0.3s ease;
+            transform: translateX(-50%);
+        }
+        
+        .tab-modern.active::before {
+            width: 100%;
+        }
+        
+        /* Formulários melhorados */
+        .form-floating {
+            position: relative;
+        }
+        
+        .form-floating input:focus + label,
+        .form-floating input:not(:placeholder-shown) + label {
+            transform: translateY(-1.5rem) scale(0.85);
+            color: #5D5CDE;
+        }
+        
+        .form-floating label {
+            position: absolute;
+            top: 0.75rem;
+            left: 0.75rem;
+            transition: all 0.2s ease;
+            pointer-events: none;
+            color: #6b7280;
+        }
+        
+        /* Status indicators */
+        .status-indicator {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+        
+        .status-online { background-color: #10b981; }
+        .status-offline { background-color: #ef4444; }
+        .status-warning { background-color: #f59e0b; }
+        
+        /* Sidebar mobile */
+        @media (max-width: 768px) {
+            .sidebar-overlay {
+                position: fixed;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background: rgba(0, 0, 0, 0.5);
+                z-index: 40;
+                opacity: 0;
+                visibility: hidden;
+                transition: all 0.3s ease;
+            }
+            
+            .sidebar-overlay.active {
+                opacity: 1;
+                visibility: visible;
+            }
+            
+            .sidebar-mobile {
+                transform: translateX(-100%);
+                transition: transform 0.3s ease;
+            }
+            
+            .sidebar-mobile.active {
+                transform: translateX(0);
+            }
+        }
+        
+        /* Melhorias no tema escuro */
+        .dark .glass {
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        /* Tooltips */
+        .tooltip {
+            position: relative;
+        }
+        
+        .tooltip::before {
+            content: attr(data-tooltip);
+            position: absolute;
+            bottom: 125%;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            white-space: nowrap;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.2s ease;
+            z-index: 1000;
+        }
+        
+        .tooltip:hover::before {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        /* Notificações */
+        .notification-enter {
+            animation: slideInRight 0.3s ease-out;
+        }
+        
+        .notification-exit {
+            animation: slideOutRight 0.3s ease-in;
+        }
+        
+        @keyframes slideInRight {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        
+        @keyframes slideOutRight {
+            from { transform: translateX(0); opacity: 1; }
+            to { transform: translateX(100%); opacity: 0; }
+        }
+        
+        /* Data tables */
+        .data-table {
+            border-collapse: separate;
+            border-spacing: 0;
+        }
+        
+        .data-table th {
+            position: sticky;
+            top: 0;
+            background: inherit;
+            z-index: 10;
+        }
+        
+        .data-table tr:hover {
+            background: rgba(93, 92, 222, 0.05);
+        }
+        
+        .dark .data-table tr:hover {
+            background: rgba(124, 122, 255, 0.1);
+        }
+        
+        /* Progress ring */
+        .progress-ring {
+            transform: rotate(-90deg);
+        }
+        
+        .progress-ring-circle {
+            stroke-dasharray: 0 100;
+            transition: stroke-dasharray 0.3s ease;
+        }
+
+        /* Modal styles */
+        .modal-backdrop {
+            backdrop-filter: blur(4px);
+        }
+
+        /* Form styles */
+        .form-input {
+            @apply bg-gray-50 border border-gray-300 text-gray-900 text-base rounded-xl focus:ring-primary-500 focus:border-primary-500 block w-full p-4 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500 transition-all duration-200;
+        }
+
+        .form-select {
+            @apply form-input appearance-none;
+        }
+
+        .form-textarea {
+            @apply form-input resize-none;
+        }
+
+        .btn-primary {
+            @apply gradient-primary text-white px-6 py-3 rounded-xl font-semibold shadow-lg hover:shadow-xl transition-all duration-200;
+        }
+
+        .btn-secondary {
+            @apply bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 px-6 py-3 rounded-xl hover:bg-gray-200 dark:hover:bg-gray-600 transition-all duration-200 font-medium;
+        }
+
+        .btn-danger {
+            @apply bg-red-500 hover:bg-red-600 text-white px-6 py-3 rounded-xl transition-all duration-200 font-medium;
+        }
+
+        .btn-success {
+            @apply bg-green-500 hover:bg-green-600 text-white px-6 py-3 rounded-xl transition-all duration-200 font-medium;
+        }
+
+        .btn-icon {
+            @apply p-3 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 transition-all duration-200;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100 min-h-screen overflow-x-hidden">
+    <!-- Loading overlay -->
+    <div id="loading-overlay" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+        <div class="bg-white dark:bg-gray-800 p-8 rounded-xl shadow-2xl">
+            <div class="flex flex-col items-center space-y-4">
+                <div class="spinner"></div>
+                <div class="text-center">
+                    <h3 class="text-lg font-semibold text-gray-900 dark:text-white">GGOMES-LOG v2.0</h3>
+                    <p class="text-sm text-gray-600 dark:text-gray-400">Carregando sistema...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Sidebar overlay (mobile) -->
+    <div id="sidebar-overlay" class="sidebar-overlay md:hidden"></div>
+    
+    <!-- Container principal da aplicação -->
+    <div id="app-container" class="flex h-screen overflow-hidden">
+        <!-- Menu lateral (Sidebar) -->
+        <aside id="sidebar" class="sidebar-mobile w-64 hidden md:block bg-white dark:bg-gray-800 shadow-2xl z-50 flex-shrink-0">
+            <div class="h-full flex flex-col">
+                <!-- Logo e título -->
+                <div class="p-6 gradient-primary text-white">
+                    <div class="text-center">
+                        <div class="w-12 h-12 bg-white bg-opacity-20 rounded-xl mx-auto mb-3 flex items-center justify-center">
+                            <i class="fas fa-seedling text-2xl"></i>
+                        </div>
+                        <h1 class="text-xl font-bold">GGOMES-LOG</h1>
+                        <p class="text-xs opacity-80">v2.0 - Sistema Avançado</p>
+                    </div>
+                </div>
+                
+                <!-- Informações do usuário -->
+                <div class="p-6 border-b border-gray-200 dark:border-gray-700">
+                    <div class="flex items-center">
+                        <div class="h-12 w-12 rounded-xl gradient-accent flex items-center justify-center shadow-lg">
+                            <i class="fas fa-user text-white text-lg"></i>
+                        </div>
+                        <div class="ml-4">
+                            <p id="sidebar-user-name" class="font-semibold text-gray-800 dark:text-white">Administrador</p>
+                            <p id="sidebar-user-role" class="text-xs text-gray-500 dark:text-gray-400 flex items-center mt-1">
+                                <span class="status-indicator status-online"></span>
+                                Sistema Online
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Links de navegação -->
+                <div class="py-6 flex-1 overflow-y-auto custom-scrollbar">
+                    <nav class="px-4 space-y-2">
+                        <a href="#dashboard" class="sidebar-link active gradient-primary text-white flex items-center px-4 py-3 rounded-xl font-medium transition-all duration-300 shadow-lg">
+                            <i class="fas fa-tachometer-alt mr-3 text-lg"></i>
+                            <span>Dashboard</span>
+                            <i class="fas fa-chevron-right ml-auto text-sm"></i>
+                        </a>
+                        
+                        <div class="px-4 py-3 text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider flex items-center">
+                            <i class="fas fa-seedling mr-2"></i>Produção
+                        </div>
+                        
+                        <a href="#colhedoras" class="sidebar-link flex items-center px-4 py-3 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-xl font-medium transition-all duration-300 group">
+                            <i class="fas fa-tractor mr-3 text-lg group-hover:text-primary-600"></i>
+                            <span>Colhedoras</span>
+                            <i class="fas fa-chevron-right ml-auto text-sm opacity-0 group-hover:opacity-70 transition-all duration-300"></i>
+                        </a>
+                        
+                        <a href="#registros" class="sidebar-link flex items-center px-4 py-3 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-xl font-medium transition-all duration-300 group">
+                            <i class="fas fa-file-alt mr-3 text-lg group-hover:text-primary-600"></i>
+                            <span>Registrar Produção</span>
+                            <i class="fas fa-chevron-right ml-auto text-sm opacity-0 group-hover:opacity-70 transition-all duration-300"></i>
+                        </a>
+                        
+                        <a href="#liberacoes" class="sidebar-link flex items-center px-4 py-3 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-xl font-medium transition-all duration-300 group">
+                            <i class="fas fa-tasks mr-3 text-lg group-hover:text-primary-600"></i>
+                            <span>Liberações</span>
+                            <i class="fas fa-chevron-right ml-auto text-sm opacity-0 group-hover:opacity-70 transition-all duration-300"></i>
+                        </a>
+                        
+                        <a href="#consumos" class="sidebar-link flex items-center px-4 py-3 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-xl font-medium transition-all duration-300 group">
+                            <i class="fas fa-oil-can mr-3 text-lg group-hover:text-primary-600"></i>
+                            <span>Consumo de Óleos</span>
+                            <i class="fas fa-chevron-right ml-auto text-sm opacity-0 group-hover:opacity-70 transition-all duration-300"></i>
+                        </a>
+                        
+                        <a href="#historico" class="sidebar-link flex items-center px-4 py-3 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-xl font-medium transition-all duration-300 group">
+                            <i class="fas fa-history mr-3 text-lg group-hover:text-primary-600"></i>
+                            <span>Histórico</span>
+                            <i class="fas fa-chevron-right ml-auto text-sm opacity-0 group-hover:opacity-70 transition-all duration-300"></i>
+                        </a>
+                        
+                        <div class="px-4 py-3 text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider flex items-center mt-6">
+                            <i class="fas fa-cloud-rain mr-2"></i>Clima e Paradas
+                        </div>
+                        
+                        <a href="#chuvas" class="sidebar-link flex items-center px-4 py-3 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-xl font-medium transition-all duration-300 group">
+                            <i class="fas fa-cloud-rain mr-3 text-lg group-hover:text-primary-600"></i>
+                            <span>Registro de Chuvas</span>
+                            <i class="fas fa-chevron-right ml-auto text-sm opacity-0 group-hover:opacity-70 transition-all duration-300"></i>
+                        </a>
+                        
+                        <div class="px-4 py-3 text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider flex items-center mt-6">
+                            <i class="fas fa-truck mr-2"></i>Logística
+                        </div>
+                        
+                        <a href="#caminhoes" class="sidebar-link flex items-center px-4 py-3 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-xl font-medium transition-all duration-300 group">
+                            <i class="fas fa-truck mr-3 text-lg group-hover:text-primary-600"></i>
+                            <span>Caminhões</span>
+                            <i class="fas fa-chevron-right ml-auto text-sm opacity-0 group-hover:opacity-70 transition-all duration-300"></i>
+                        </a>
+                        
+                        <div class="px-4 py-3 text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider flex items-center mt-6">
+                            <i class="fas fa-cog mr-2"></i>Sistema
+                        </div>
+                        
+                        <a href="#configuracoes" class="sidebar-link flex items-center px-4 py-3 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-xl font-medium transition-all duration-300 group">
+                            <i class="fas fa-cog mr-3 text-lg group-hover:text-primary-600"></i>
+                            <span>Configurações</span>
+                            <i class="fas fa-chevron-right ml-auto text-sm opacity-0 group-hover:opacity-70 transition-all duration-300"></i>
+                        </a>
+                    </nav>
+                </div>
+                
+                <!-- Rodapé do sidebar -->
+                <div class="p-6 border-t border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900">
+                    <div class="text-center">
+                        <p class="text-xs text-gray-500 dark:text-gray-400 font-semibold">GGOMES-LOG &copy; 2025</p>
+                        <p class="text-xs text-gray-500 dark:text-gray-400">Versão 2.0</p>
+                        <div class="mt-3 flex justify-center items-center space-x-2">
+                            <span class="status-indicator status-online"></span>
+                            <span class="text-xs text-green-600 dark:text-green-400 font-medium">Sistema Online</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </aside>
+        
+        <!-- Conteúdo principal -->
+        <div class="flex-1 flex flex-col overflow-hidden">
+            <!-- Barra superior (Header) -->
+            <header class="bg-white dark:bg-gray-800 shadow-xl z-20 border-b border-gray-200 dark:border-gray-700">
+                <div class="flex items-center justify-between px-6 py-4">
+                    <!-- Toggle do menu lateral (mobile) e Breadcrumb -->
+                    <div class="flex items-center">
+                        <button id="mobile-menu-toggle" class="md:hidden p-2 rounded-lg text-gray-500 hover:text-gray-600 hover:bg-gray-100 dark:text-gray-400 dark:hover:text-gray-300 dark:hover:bg-gray-700 transition-all duration-200">
+                            <i class="fas fa-bars text-lg"></i>
+                        </button>
+                        
+                        <!-- Breadcrumb -->
+                        <nav class="hidden md:flex ml-4" aria-label="Breadcrumb">
+                            <ol class="flex items-center space-x-2">
+                                <li>
+                                    <i class="fas fa-home text-gray-400"></i>
+                                </li>
+                                <li>
+                                    <i class="fas fa-chevron-right text-gray-400 text-xs mx-2"></i>
+                                </li>
+                                <li id="breadcrumb-current" class="text-gray-600 dark:text-gray-300 font-semibold">Dashboard</li>
+                            </ol>
+                        </nav>
+                    </div>
+                    
+                    <!-- Informações rápidas e centrais -->
+                    <div class="hidden lg:flex items-center space-x-6">
+                        <div class="glass dark:glass-dark p-4 rounded-xl shadow-lg">
+                            <div class="flex items-center">
+                                <div class="flex items-center">
+                                    <i class="fas fa-weight-hanging text-blue-500 mr-3 text-xl"></i>
+                                    <div>
+                                        <span class="text-xs text-gray-600 dark:text-gray-400 font-medium block">Total Colhido</span>
+                                        <span id="quick-total-colhido" class="text-lg font-bold text-gray-800 dark:text-white">0 T</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="glass dark:glass-dark p-4 rounded-xl shadow-lg">
+                            <div class="flex items-center">
+                                <div class="flex items-center">
+                                    <i class="fas fa-tractor text-green-500 mr-3 text-xl"></i>
+                                    <div>
+                                        <span class="text-xs text-gray-600 dark:text-gray-400 font-medium block">Colhedoras</span>
+                                        <span id="quick-colhedoras" class="text-lg font-bold text-gray-800 dark:text-white">0</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="glass dark:glass-dark p-4 rounded-xl shadow-lg">
+                            <div class="flex items-center">
+                                <div class="flex items-center">
+                                    <i class="fas fa-tasks text-purple-500 mr-3 text-xl"></i>
+                                    <div>
+                                        <span class="text-xs text-gray-600 dark:text-gray-400 font-medium block">Liberações</span>
+                                        <span id="quick-liberacoes" class="text-lg font-bold text-gray-800 dark:text-white">0</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Ações e perfil do usuário -->
+                    <div class="flex items-center space-x-3">
+                        <!-- Informações meteorológicas -->
+                        <div class="hidden sm:flex items-center glass dark:glass-dark px-4 py-2 rounded-xl shadow-lg">
+                            <i id="weather-icon" class="text-blue-500 mr-2 animate-pulse-soft text-lg"></i>
+                            <span id="weather-temp" class="text-sm font-semibold text-gray-700 dark:text-gray-300">--°C</span>
+                        </div>
+                        
+                        <!-- Data atual -->
+                        <div class="hidden sm:block">
+                            <div class="text-center">
+                                <span id="current-date" class="text-sm text-gray-600 dark:text-gray-400 font-medium block">--/--/----</span>
+                                <span id="current-time" class="text-xs text-gray-500 dark:text-gray-500">--:--</span>
+                            </div>
+                        </div>
+                        
+                        <!-- Toggle de tema claro/escuro -->
+                        <button id="toggle-theme" class="p-3 rounded-xl text-gray-500 hover:text-gray-600 hover:bg-gray-100 dark:text-gray-400 dark:hover:text-gray-300 dark:hover:bg-gray-700 transition-all duration-200 tooltip shadow-lg" data-tooltip="Alternar tema">
+                            <i class="fas fa-moon dark:hidden text-lg"></i>
+                            <i class="fas fa-sun hidden dark:inline-block text-lg"></i>
+                        </button>
+                        
+                        <!-- Ícone de notificações -->
+                        <button id="btn-notifications" class="p-3 rounded-xl text-gray-500 hover:text-gray-600 hover:bg-gray-100 dark:text-gray-400 dark:hover:text-gray-300 dark:hover:bg-gray-700 relative transition-all duration-200 tooltip shadow-lg" data-tooltip="Notificações">
+                            <i class="fas fa-bell text-lg"></i>
+                            <span id="notification-badge" class="hidden absolute -top-1 -right-1 bg-red-500 text-white text-xs font-bold rounded-full h-6 w-6 flex items-center justify-center animate-bounce-soft">0</span>
+                        </button>
+                        
+                        <!-- Busca rápida -->
+                        <button id="btn-search" class="p-3 rounded-xl text-gray-500 hover:text-gray-600 hover:bg-gray-100 dark:text-gray-400 dark:hover:text-gray-300 dark:hover:bg-gray-700 transition-all duration-200 tooltip shadow-lg" data-tooltip="Busca rápida (Ctrl+K)">
+                            <i class="fas fa-search text-lg"></i>
+                        </button>
+                        
+                        <!-- Perfil do usuário -->
+                        <div class="flex items-center">
+                            <div class="mr-3 text-right hidden sm:block">
+                                <div id="user-name" class="text-sm font-semibold text-gray-800 dark:text-white">Administrador</div>
+                                <div class="flex items-center justify-end mt-1">
+                                    <span id="user-role-badge" class="px-3 py-1 rounded-full text-xs font-medium gradient-primary text-white shadow-md">Admin</span>
+                                </div>
+                            </div>
+                            <div class="h-12 w-12 rounded-xl gradient-accent flex items-center justify-center shadow-lg cursor-pointer hover:shadow-xl transition-all duration-200 group">
+                                <i class="fas fa-user text-white group-hover:scale-110 transition-transform duration-200"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </header>
+            
+            <!-- Conteúdo principal -->
+            <main class="flex-1 overflow-x-hidden overflow-y-auto bg-gray-100 dark:bg-gray-900 p-6 custom-scrollbar">
+                <!-- Toast container para mensagens -->
+                <div id="toast-container" class="fixed top-4 right-4 z-50 space-y-4"></div>
+                
+                <!-- Search Modal -->
+                <div id="search-modal" class="fixed inset-0 bg-black bg-opacity-60 flex items-start justify-center pt-20 z-50 hidden backdrop-blur-sm">
+                    <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl w-full max-w-3xl mx-4 overflow-hidden border border-gray-200 dark:border-gray-700">
+                        <div class="p-6 border-b border-gray-200 dark:border-gray-700">
+                            <div class="flex items-center">
+                                <i class="fas fa-search text-gray-400 mr-4 text-xl"></i>
+                                <input type="text" id="search-input" placeholder="Buscar em colhedoras, registros, liberações..." class="flex-1 bg-transparent border-none outline-none text-xl text-gray-700 dark:text-gray-300 placeholder-gray-400">
+                                <button id="close-search" class="p-2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 rounded-lg transition-colors">
+                                    <i class="fas fa-times text-xl"></i>
+                                </button>
+                            </div>
+                            <div class="mt-4 flex items-center space-x-4 text-sm text-gray-500">
+                                <span><kbd class="px-2 py-1 bg-gray-100 dark:bg-gray-700 rounded text-xs">Enter</kbd> para selecionar</span>
+                                <span><kbd class="px-2 py-1 bg-gray-100 dark:bg-gray-700 rounded text-xs">Esc</kbd> para fechar</span>
+                            </div>
+                        </div>
+                        <div id="search-results" class="max-h-96 overflow-y-auto p-6 custom-scrollbar">
+                            <div class="text-center text-gray-500 dark:text-gray-400 py-8">
+                                <i class="fas fa-search text-4xl mb-4 opacity-50"></i>
+                                <p class="text-lg">Digite para buscar...</p>
+                                <p class="text-sm mt-2">Busque por colhedoras, registros, liberações e muito mais</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Conteúdo do dashboard -->
+                <div id="content-dashboard" class="content animate-fade-in">
+                    <div class="mb-8">
+                        <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between">
+                            <div class="mb-4 lg:mb-0">
+                                <h2 class="text-4xl font-bold text-gray-800 dark:text-white mb-2">Dashboard</h2>
+                                <p class="text-lg text-gray-600 dark:text-gray-400">Visão completa da operação e indicadores de desempenho</p>
+                            </div>
+                            <div class="flex flex-col sm:flex-row items-start sm:items-center space-y-2 sm:space-y-0 sm:space-x-4">
+                                <div class="text-right">
+                                    <p class="text-sm text-gray-500 dark:text-gray-400">Última atualização</p>
+                                    <p id="last-update" class="text-sm font-semibold text-gray-700 dark:text-gray-300">--:--</p>
+                                </div>
+                                <button id="refresh-dashboard" class="btn-primary">
+                                    <i class="fas fa-sync-alt mr-2"></i> Atualizar Dashboard
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Cards resumo -->
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                        <!-- Total colhido -->
+                        <div class="card-hover bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-6 border border-gray-200 dark:border-gray-700">
+                            <div class="flex justify-between items-start">
+                                <div>
+                                    <h3 class="text-sm font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wide">Total Colhido</h3>
+                                    <div class="flex items-baseline mt-2">
+                                        <span id="dash-total-colhido" class="text-3xl font-bold text-gray-900 dark:text-white">0 T</span>
+                                    </div>
+                                </div>
+                                <div class="p-3 gradient-primary rounded-xl shadow-lg">
+                                    <i class="fas fa-weight-hanging text-2xl text-white"></i>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Total Colhedoras -->
+                        <div class="card-hover bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-6 border border-gray-200 dark:border-gray-700">
+                            <div class="flex justify-between items-start">
+                                <div>
+                                    <h3 class="text-sm font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wide">Colhedoras Ativas</h3>
+                                    <div class="flex items-baseline mt-2">
+                                        <span id="dash-colhedoras-ativas" class="text-3xl font-bold text-gray-900 dark:text-white">0</span>
+                                    </div>
+                                </div>
+                                <div class="p-3 bg-green-500 rounded-xl shadow-lg">
+                                    <i class="fas fa-tractor text-2xl text-white"></i>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Total Liberações -->
+                        <div class="card-hover bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-6 border border-gray-200 dark:border-gray-700">
+                            <div class="flex justify-between items-start">
+                                <div>
+                                    <h3 class="text-sm font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wide">Liberações Ativas</h3>
+                                    <div class="flex items-baseline mt-2">
+                                        <span id="dash-liberacoes-ativas" class="text-3xl font-bold text-gray-900 dark:text-white">0</span>
+                                    </div>
+                                </div>
+                                <div class="p-3 bg-purple-500 rounded-xl shadow-lg">
+                                    <i class="fas fa-tasks text-2xl text-white"></i>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Média Produtividade -->
+                        <div class="card-hover bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-6 border border-gray-200 dark:border-gray-700">
+                            <div class="flex justify-between items-start">
+                                <div>
+                                    <h3 class="text-sm font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wide">Rendimento/Hora</h3>
+                                    <div class="flex items-baseline mt-2">
+                                        <span id="dash-media-hora" class="text-3xl font-bold text-gray-900 dark:text-white">0 T/h</span>
+                                    </div>
+                                </div>
+                                <div class="p-3 gradient-accent rounded-xl shadow-lg">
+                                    <i class="fas fa-clock text-2xl text-white"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Gráfico de produção -->
+                    <div class="card-hover bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-8 border border-gray-200 dark:border-gray-700 mb-8">
+                        <div class="flex items-center justify-between mb-6">
+                            <h3 class="text-xl font-bold text-gray-800 dark:text-white">Evolução da Produção</h3>
+                        </div>
+                        <div class="h-96">
+                            <canvas id="chart-producao-tempo"></canvas>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Página de Colhedoras -->
+                <div id="content-colhedoras" class="content hidden animate-fade-in">
+                    <div class="mb-8">
+                        <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between">
+                            <div class="mb-4 lg:mb-0">
+                                <h2 class="text-4xl font-bold text-gray-800 dark:text-white mb-2">Gerenciamento de Colhedoras</h2>
+                                <p class="text-lg text-gray-600 dark:text-gray-400">Controle completo da frota de colhedoras</p>
+                            </div>
+                            <button id="btn-nova-colhedora" class="btn-primary">
+                                <i class="fas fa-plus mr-2"></i> Nova Colhedora
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- Cards de estatísticas das colhedoras -->
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                        <div class="card-hover bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-6 border border-gray-200 dark:border-gray-700">
+                            <div class="flex justify-between items-start">
+                                <div>
+                                    <h3 class="text-sm font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wide">Total de Colhedoras</h3>
+                                    <div class="flex items-baseline mt-2">
+                                        <span id="total-colhedoras-count" class="text-3xl font-bold text-gray-900 dark:text-white">0</span>
+                                    </div>
+                                </div>
+                                <div class="p-3 gradient-primary rounded-xl shadow-lg">
+                                    <i class="fas fa-tractor text-2xl text-white"></i>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="card-hover bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-6 border border-gray-200 dark:border-gray-700">
+                            <div class="flex justify-between items-start">
+                                <div>
+                                    <h3 class="text-sm font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wide">Ativas</h3>
+                                    <div class="flex items-baseline mt-2">
+                                        <span id="colhedoras-ativas-count" class="text-3xl font-bold text-gray-900 dark:text-white">0</span>
+                                    </div>
+                                </div>
+                                <div class="p-3 bg-green-500 rounded-xl shadow-lg">
+                                    <i class="fas fa-check-circle text-2xl text-white"></i>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="card-hover bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-6 border border-gray-200 dark:border-gray-700">
+                            <div class="flex justify-between items-start">
+                                <div>
+                                    <h3 class="text-sm font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wide">Em Manutenção</h3>
+                                    <div class="flex items-baseline mt-2">
+                                        <span id="colhedoras-manutencao-count" class="text-3xl font-bold text-gray-900 dark:text-white">0</span>
+                                    </div>
+                                </div>
+                                <div class="p-3 bg-yellow-500 rounded-xl shadow-lg">
+                                    <i class="fas fa-tools text-2xl text-white"></i>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="card-hover bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-6 border border-gray-200 dark:border-gray-700">
+                            <div class="flex justify-between items-start">
+                                <div>
+                                    <h3 class="text-sm font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wide">Inativas</h3>
+                                    <div class="flex items-baseline mt-2">
+                                        <span id="colhedoras-inativas-count" class="text-3xl font-bold text-gray-900 dark:text-white">0</span>
+                                    </div>
+                                </div>
+                                <div class="p-3 bg-red-500 rounded-xl shadow-lg">
+                                    <i class="fas fa-times-circle text-2xl text-white"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Tabela de colhedoras -->
+                    <div class="card-hover bg-white dark:bg-gray-800 rounded-2xl shadow-xl border border-gray-200 dark:border-gray-700">
+                        <div class="overflow-x-auto">
+                            <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700 data-table">
+                                <thead class="bg-gray-50 dark:bg-gray-700">
+                                    <tr>
+                                        <th scope="col" class="px-6 py-4 text-left text-xs font-bold text-gray-500 dark:text-gray-300 uppercase tracking-wider">Colhedora</th>
+                                        <th scope="col" class="px-6 py-4 text-left text-xs font-bold text-gray-500 dark:text-gray-300 uppercase tracking-wider">Marca/Modelo</th>
+                                        <th scope="col" class="px-6 py-4 text-center text-xs font-bold text-gray-500 dark:text-gray-300 uppercase tracking-wider">Ano</th>
+                                        <th scope="col" class="px-6 py-4 text-center text-xs font-bold text-gray-500 dark:text-gray-300 uppercase tracking-wider">Status</th>
+                                        <th scope="col" class="px-6 py-4 text-center text-xs font-bold text-gray-500 dark:text-gray-300 uppercase tracking-wider">Ações</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tabela-colhedoras" class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
+                                    <!-- Dados serão preenchidos via JavaScript -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Página de Registros de Produção -->
+                <div id="content-registros" class="content hidden animate-fade-in">
+                    <div class="mb-8">
+                        <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between">
+                            <div class="mb-4 lg:mb-0">
+                                <h2 class="text-4xl font-bold text-gray-800 dark:text-white mb-2">Registrar Produção</h2>
+                                <p class="text-lg text-gray-600 dark:text-gray-400">Registre a produção diária das colhedoras</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Formulário de registro -->
+                    <div class="glass dark:glass-dark rounded-2xl shadow-xl p-8 mb-8">
+                        <h3 class="text-xl font-bold text-gray-800 dark:text-white mb-6">Registro Rápido de Produção</h3>
+                        <form id="form-registro-producao">
+                            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                                <div>
+                                    <label for="registro-data" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Data do Registro</label>
+                                    <input type="date" id="registro-data" class="form-input" required>
+                                </div>
+                                <div>
+                                    <label for="registro-colhedora" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Colhedora</label>
+                                    <select id="registro-colhedora" class="form-select" required>
+                                        <option value="">Selecione uma colhedora</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label for="registro-cultura" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Cultura</label>
+                                    <select id="registro-cultura" class="form-select" required>
+                                        <option value="">Selecione a cultura</option>
+                                        <option value="Soja">Soja</option>
+                                        <option value="Milho">Milho</option>
+                                        <option value="Trigo">Trigo</option>
+                                        <option value="Feijão">Feijão</option>
+                                        <option value="Algodão">Algodão</option>
+                                        <option value="Cana de açúcar">Cana de açúcar</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label for="registro-quantidade" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Quantidade (Toneladas)</label>
+                                    <input type="number" id="registro-quantidade" class="form-input" step="0.1" placeholder="0.0" required>
+                                </div>
+                                <div>
+                                    <label for="registro-horas" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Horas Trabalhadas</label>
+                                    <input type="number" id="registro-horas" class="form-input" step="0.1" placeholder="0.0" required>
+                                </div>
+                                <div>
+                                    <label for="registro-operador" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Operador</label>
+                                    <input type="text" id="registro-operador" class="form-input" placeholder="Nome do operador">
+                                </div>
+                            </div>
+                            <div class="mt-6">
+                                <label for="registro-observacoes" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Observações</label>
+                                <textarea id="registro-observacoes" class="form-textarea" rows="3" placeholder="Observações adicionais sobre a produção..."></textarea>
+                            </div>
+                            <div class="flex space-x-4 mt-8">
+                                <button type="submit" class="btn-primary">
+                                    <i class="fas fa-save mr-2"></i> Salvar Registro
+                                </button>
+                                <button type="button" id="btn-limpar-form-registro" class="btn-secondary">
+                                    <i class="fas fa-broom mr-2"></i> Limpar
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                    
+                    <!-- Registros recentes -->
+                    <div class="card-hover bg-white dark:bg-gray-800 rounded-2xl shadow-xl border border-gray-200 dark:border-gray-700">
+                        <div class="p-6 border-b border-gray-200 dark:border-gray-700">
+                            <h3 class="text-xl font-bold text-gray-800 dark:text-white">Registros Recentes</h3>
+                        </div>
+                        <div class="overflow-x-auto">
+                            <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700 data-table">
+                                <thead class="bg-gray-50 dark:bg-gray-700">
+                                    <tr>
+                                        <th scope="col" class="px-6 py-4 text-left text-xs font-bold text-gray-500 dark:text-gray-300 uppercase tracking-wider">Data</th>
+                                        <th scope="col" class="px-6 py-4 text-left text-xs font-bold text-gray-500 dark:text-gray-300 uppercase tracking-wider">Colhedora</th>
+                                        <th scope="col" class="px-6 py-4 text-left text-xs font-bold text-gray-500 dark:text-gray-300 uppercase tracking-wider">Cultura</th>
+                                        <th scope="col" class="px-6 py-4 text-right text-xs font-bold text-gray-500 dark:text-gray-300 uppercase tracking-wider">Quantidade</th>
+                                        <th scope="col" class="px-6 py-4 text-right text-xs font-bold text-gray-500 dark:text-gray-300 uppercase tracking-wider">Horas</th>
+                                        <th scope="col" class="px-6 py-4 text-center text-xs font-bold text-gray-500 dark:text-gray-300 uppercase tracking-wider">Ações</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tabela-registros-producao" class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
+                                    <!-- Dados serão preenchidos via JavaScript -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Página de Liberações -->
+                <div id="content-liberacoes" class="content hidden animate-fade-in">
+                    <div class="mb-8">
+                        <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between">
+                            <div class="mb-4 lg:mb-0">
+                                <h2 class="text-4xl font-bold text-gray-800 dark:text-white mb-2">Gerenciamento de Liberações</h2>
+                                <p class="text-lg text-gray-600 dark:text-gray-400">Controle de liberações de produção por fazenda e frente</p>
+                            </div>
+                            <button id="btn-nova-liberacao" class="btn-primary">
+                                <i class="fas fa-plus mr-2"></i> Nova Liberação
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- Cards de estatísticas das liberações -->
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                        <div class="card-hover bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-6 border border-gray-200 dark:border-gray-700">
+                            <div class="flex justify-between items-start">
+                                <div>
+                                    <h3 class="text-sm font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wide">Total de Liberações</h3>
+                                    <div class="flex items-baseline mt-2">
+                                        <span id="total-liberacoes-count" class="text-3xl font-bold text-gray-900 dark:text-white">0</span>
+                                    </div>
+                                </div>
+                                <div class="p-3 gradient-primary rounded-xl shadow-lg">
+                                    <i class="fas fa-tasks text-2xl text-white"></i>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="card-hover bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-6 border border-gray-200 dark:border-gray-700">
+                            <div class="flex justify-between items-start">
+                                <div>
+                                    <h3 class="text-sm font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wide">Em Andamento</h3>
+                                    <div class="flex items-baseline mt-2">
+                                        <span id="liberacoes-andamento-count" class="text-3xl font-bold text-gray-900 dark:text-white">0</span>
+                                    </div>
+                                </div>
+                                <div class="p-3 bg-yellow-500 rounded-xl shadow-lg">
+                                    <i class="fas fa-clock text-2xl text-white"></i>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="card-hover bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-6 border border-gray-200 dark:border-gray-700">
+                            <div class="flex justify-between items-start">
+                                <div>
+                                    <h3 class="text-sm font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wide">Concluídas</h3>
+                                    <div class="flex items-baseline mt-2">
+                                        <span id="liberacoes-concluidas-count" class="text-3xl font-bold text-gray-900 dark:text-white">0</span>
+                                    </div>
+                                </div>
+                                <div class="p-3 bg-green-500 rounded-xl shadow-lg">
+                                    <i class="fas fa-check-circle text-2xl text-white"></i>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="card-hover bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-6 border border-gray-200 dark:border-gray-700">
+                            <div class="flex justify-between items-start">
+                                <div>
+                                    <h3 class="text-sm font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wide">Total Previsto</h3>
+                                    <div class="flex items-baseline mt-2">
+                                        <span id="total-previsto-liberacoes" class="text-3xl font-bold text-gray-900 dark:text-white">0 T</span>
+                                    </div>
+                                </div>
+                                <div class="p-3 gradient-accent rounded-xl shadow-lg">
+                                    <i class="fas fa-bullseye text-2xl text-white"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Filtros e busca -->
+                    <div class="glass dark:glass-dark rounded-2xl shadow-xl p-6 mb-8">
+                        <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between space-y-4 lg:space-y-0">
+                            <div class="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4">
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Filtrar por Status</label>
+                                    <select id="filtro-status-liberacoes" class="form-select">
+                                        <option value="">Todos os status</option>
+                                        <option value="em_andamento">Em Andamento</option>
+                                        <option value="concluida">Concluída</option>
+                                        <option value="atrasada">Atrasada</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Filtrar por Fazenda</label>
+                                    <select id="filtro-fazenda-liberacoes" class="form-select">
+                                        <option value="">Todas as fazendas</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Buscar</label>
+                                    <input type="text" id="busca-liberacoes" placeholder="Número, fazenda ou frente..." class="form-input">
+                                </div>
+                            </div>
+                            <button id="btn-limpar-filtros-liberacoes" class="btn-secondary">
+                                <i class="fas fa-times mr-2"></i>Limpar Filtros
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- Tabela de liberações -->
+                    <div class="card-hover bg-white dark:bg-gray-800 rounded-2xl shadow-xl border border-gray-200 dark:border-gray-700">
+                        <div class="overflow-x-auto">
+                            <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700 data-table">
+                                <thead class="bg-gray-50 dark:bg-gray-700">
+                                    <tr>
+                                        <th scope="col" class="px-6 py-4 text-left text-xs font-bold text-gray-500 dark:text-gray-300 uppercase tracking-wider">Liberação</th>
+                                        <th scope="col" class="px-6 py-4 text-left text-xs font-bold text-gray-500 dark:text-gray-300 uppercase tracking-wider">Fazenda/Frente</th>
+                                        <th scope="col" class="px-6 py-4 text-right text-xs font-bold text-gray-500 dark:text-gray-300 uppercase tracking-wider">Previsto</th>
+                                        <th scope="col" class="px-6 py-4 text-right text-xs font-bold text-gray-500 dark:text-gray-300 uppercase tracking-wider">Realizado</th>
+                                        <th scope="col" class="px-6 py-4 text-right text-xs font-bold text-gray-500 dark:text-gray-300 uppercase tracking-wider">T Restante</th>
+                                        <th scope="col" class="px-6 py-4 text-center text-xs font-bold text-gray-500 dark:text-gray-300 uppercase tracking-wider">Progresso</th>
+                                        <th scope="col" class="px-6 py-4 text-center text-xs font-bold text-gray-500 dark:text-gray-300 uppercase tracking-wider">Status</th>
+                                        <th scope="col" class="px-6 py-4 text-center text-xs font-bold text-gray-500 dark:text-gray-300 uppercase tracking-wider">Ações</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tabela-liberacoes" class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
+                                    <!-- Dados serão preenchidos via JavaScript -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Outras páginas (implementação similar) -->
+                <div id="content-consumos" class="content hidden animate-fade-in">
+                    <div class="text-center py-16">
+                        <i class="fas fa-oil-can text-6xl text-gray-400 mb-4"></i>
+                        <h3 class="text-2xl font-bold text-gray-800 dark:text-white mb-2">Consumo de Óleos</h3>
+                        <p class="text-gray-600 dark:text-gray-400">Sistema de controle de consumo em desenvolvimento...</p>
+                    </div>
+                </div>
+                
+                <div id="content-historico" class="content hidden animate-fade-in">
+                    <div class="text-center py-16">
+                        <i class="fas fa-history text-6xl text-gray-400 mb-4"></i>
+                        <h3 class="text-2xl font-bold text-gray-800 dark:text-white mb-2">Histórico</h3>
+                        <p class="text-gray-600 dark:text-gray-400">Histórico completo em desenvolvimento...</p>
+                    </div>
+                </div>
+                
+                <div id="content-chuvas" class="content hidden animate-fade-in">
+                    <div class="text-center py-16">
+                        <i class="fas fa-cloud-rain text-6xl text-gray-400 mb-4"></i>
+                        <h3 class="text-2xl font-bold text-gray-800 dark:text-white mb-2">Registro de Chuvas</h3>
+                        <p class="text-gray-600 dark:text-gray-400">Sistema meteorológico em desenvolvimento...</p>
+                    </div>
+                </div>
+                
+                <div id="content-caminhoes" class="content hidden animate-fade-in">
+                    <div class="text-center py-16">
+                        <i class="fas fa-truck text-6xl text-gray-400 mb-4"></i>
+                        <h3 class="text-2xl font-bold text-gray-800 dark:text-white mb-2">Caminhões</h3>
+                        <p class="text-gray-600 dark:text-gray-400">Gestão de frota em desenvolvimento...</p>
+                    </div>
+                </div>
+                
+                <div id="content-configuracoes" class="content hidden animate-fade-in">
+                    <div class="text-center py-16">
+                        <i class="fas fa-cog text-6xl text-gray-400 mb-4"></i>
+                        <h3 class="text-2xl font-bold text-gray-800 dark:text-white mb-2">Configurações</h3>
+                        <p class="text-gray-600 dark:text-gray-400">Configurações do sistema em desenvolvimento...</p>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+    
+    <!-- Painel de notificações -->
+    <div id="notifications-panel" class="fixed inset-y-0 right-0 w-96 bg-white dark:bg-gray-800 shadow-2xl transform translate-x-full transition-transform duration-300 ease-in-out z-30 flex flex-col border-l border-gray-200 dark:border-gray-700">
+        <div class="gradient-primary p-6 text-white">
+            <div class="flex justify-between items-center">
+                <div>
+                    <h3 class="text-xl font-bold">Central de Notificações</h3>
+                    <p class="text-sm opacity-80">Alertas e informações do sistema</p>
+                </div>
+                <button id="close-notifications" class="p-2 rounded-xl hover:bg-white hover:bg-opacity-20 transition-all duration-200">
+                    <i class="fas fa-times text-xl"></i>
+                </button>
+            </div>
+        </div>
+        
+        <div class="flex-1 flex flex-col">
+            <div id="notifications-list" class="flex-1 overflow-y-auto p-6 space-y-4 custom-scrollbar">
+                <!-- Notificações serão preenchidas via JavaScript -->
+            </div>
+            
+            <div class="p-6 border-t border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900">
+                <div class="flex space-x-3">
+                    <button id="btn-clear-notifications" class="flex-1 btn-primary">
+                        <i class="fas fa-check-double mr-2"></i>Marcar Todas Como Lidas
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal para Nova Colhedora -->
+    <div id="modal-nova-colhedora" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden modal-backdrop">
+        <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl w-full max-w-2xl mx-4 max-h-[90vh] overflow-y-auto">
+            <div class="p-6 border-b border-gray-200 dark:border-gray-700">
+                <div class="flex items-center justify-between">
+                    <h3 class="text-xl font-bold text-gray-800 dark:text-white">Nova Colhedora</h3>
+                    <button class="close-modal p-2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 rounded-lg transition-colors">
+                        <i class="fas fa-times text-xl"></i>
+                    </button>
+                </div>
+            </div>
+            <form id="form-nova-colhedora" class="p-6">
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <div>
+                        <label for="nova-colhedora-id" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">ID da Colhedora</label>
+                        <input type="text" id="nova-colhedora-id" class="form-input" placeholder="Ex: COL-001" required>
+                    </div>
+                    <div>
+                        <label for="nova-colhedora-marca" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Marca</label>
+                        <select id="nova-colhedora-marca" class="form-select" required>
+                            <option value="">Selecione a marca</option>
+                            <option value="John Deere">John Deere</option>
+                            <option value="New Holland">New Holland</option>
+                            <option value="Case IH">Case IH</option>
+                            <option value="Massey Ferguson">Massey Ferguson</option>
+                            <option value="Claas">Claas</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label for="nova-colhedora-modelo" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Modelo</label>
+                        <input type="text" id="nova-colhedora-modelo" class="form-input" placeholder="Ex: 9670 STS" required>
+                    </div>
+                    <div>
+                        <label for="nova-colhedora-ano" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Ano</label>
+                        <input type="number" id="nova-colhedora-ano" class="form-input" min="1990" max="2030" required>
+                    </div>
+                    <div>
+                        <label for="nova-colhedora-status" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Status</label>
+                        <select id="nova-colhedora-status" class="form-select" required>
+                            <option value="ativa">Ativa</option>
+                            <option value="manutencao">Manutenção</option>
+                            <option value="inativa">Inativa</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label for="nova-colhedora-horimetro" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Horímetro Atual</label>
+                        <input type="number" id="nova-colhedora-horimetro" class="form-input" step="0.1" placeholder="0.0">
+                    </div>
+                </div>
+                <div class="mt-6">
+                    <label for="nova-colhedora-observacoes" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Observações</label>
+                    <textarea id="nova-colhedora-observacoes" class="form-textarea" rows="3" placeholder="Observações sobre a colhedora..."></textarea>
+                </div>
+                <div class="flex space-x-4 mt-8">
+                    <button type="submit" class="btn-primary">
+                        <i class="fas fa-save mr-2"></i> Salvar Colhedora
+                    </button>
+                    <button type="button" class="close-modal btn-secondary">
+                        <i class="fas fa-times mr-2"></i> Cancelar
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal para Nova Liberação -->
+    <div id="modal-nova-liberacao" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden modal-backdrop">
+        <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl w-full max-w-3xl mx-4 max-h-[90vh] overflow-y-auto">
+            <div class="p-6 border-b border-gray-200 dark:border-gray-700">
+                <div class="flex items-center justify-between">
+                    <h3 class="text-xl font-bold text-gray-800 dark:text-white">Nova Liberação</h3>
+                    <button class="close-modal-liberacao p-2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 rounded-lg transition-colors">
+                        <i class="fas fa-times text-xl"></i>
+                    </button>
+                </div>
+            </div>
+            <form id="form-nova-liberacao" class="p-6">
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <div>
+                        <label for="nova-liberacao-numero" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Número da Liberação</label>
+                        <input type="text" id="nova-liberacao-numero" class="form-input" placeholder="Ex: LIB-001" required>
+                    </div>
+                    <div>
+                        <label for="nova-liberacao-fazenda" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Fazenda</label>
+                        <div class="flex space-x-2">
+                            <select id="nova-liberacao-fazenda" class="form-select flex-1" required>
+                                <option value="">Selecione a fazenda</option>
+                            </select>
+                            <button type="button" id="btn-nova-fazenda" class="btn-icon border border-gray-300 dark:border-gray-600" title="Adicionar nova fazenda">
+                                <i class="fas fa-plus"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div>
+                        <label for="nova-liberacao-frente" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Frente</label>
+                        <input type="text" id="nova-liberacao-frente" class="form-input" placeholder="Ex: Frente A, Setor 1" required>
+                    </div>
+                    <div>
+                        <label for="nova-liberacao-cultura" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Cultura</label>
+                        <select id="nova-liberacao-cultura" class="form-select" required>
+                            <option value="">Selecione a cultura</option>
+                            <option value="Soja">Soja</option>
+                            <option value="Milho">Milho</option>
+                            <option value="Trigo">Trigo</option>
+                            <option value="Feijão">Feijão</option>
+                            <option value="Algodão">Algodão</option>
+                            <option value="Cana de açúcar">Cana de açúcar</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label for="nova-liberacao-previsto" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Quantidade Prevista (T)</label>
+                        <input type="number" id="nova-liberacao-previsto" class="form-input" step="0.1" placeholder="0.0" required>
+                    </div>
+                    <div>
+                        <label for="nova-liberacao-prazo" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Prazo de Conclusão</label>
+                        <input type="date" id="nova-liberacao-prazo" class="form-input" required>
+                    </div>
+                    <div>
+                        <label for="nova-liberacao-area" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Área (Hectares)</label>
+                        <input type="number" id="nova-liberacao-area" class="form-input" step="0.1" placeholder="0.0">
+                    </div>
+                    <div>
+                        <label for="nova-liberacao-responsavel" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Responsável</label>
+                        <input type="text" id="nova-liberacao-responsavel" class="form-input" placeholder="Nome do responsável">
+                    </div>
+                </div>
+                <div class="mt-6">
+                    <label for="nova-liberacao-observacoes" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Observações</label>
+                    <textarea id="nova-liberacao-observacoes" class="form-textarea" rows="3" placeholder="Observações sobre a liberação..."></textarea>
+                </div>
+                <div class="flex space-x-4 mt-8">
+                    <button type="submit" class="btn-primary">
+                        <i class="fas fa-save mr-2"></i> Salvar Liberação
+                    </button>
+                    <button type="button" class="close-modal-liberacao btn-secondary">
+                        <i class="fas fa-times mr-2"></i> Cancelar
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal para Nova Fazenda -->
+    <div id="modal-nova-fazenda" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden modal-backdrop">
+        <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl w-full max-w-lg mx-4">
+            <div class="p-6 border-b border-gray-200 dark:border-gray-700">
+                <div class="flex items-center justify-between">
+                    <h3 class="text-xl font-bold text-gray-800 dark:text-white">Nova Fazenda</h3>
+                    <button class="close-modal-fazenda p-2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 rounded-lg transition-colors">
+                        <i class="fas fa-times text-xl"></i>
+                    </button>
+                </div>
+            </div>
+            <form id="form-nova-fazenda" class="p-6">
+                <div class="space-y-6">
+                    <div>
+                        <label for="nova-fazenda-nome" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Nome da Fazenda</label>
+                        <input type="text" id="nova-fazenda-nome" class="form-input" placeholder="Ex: Fazenda Santa Clara" required>
+                    </div>
+                    <div>
+                        <label for="nova-fazenda-localidade" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Localidade</label>
+                        <input type="text" id="nova-fazenda-localidade" class="form-input" placeholder="Ex: Zona Rural - Cidade/Estado">
+                    </div>
+                    <div>
+                        <label for="nova-fazenda-area-total" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Área Total (Hectares)</label>
+                        <input type="number" id="nova-fazenda-area-total" class="form-input" step="0.1" placeholder="0.0">
+                    </div>
+                    <div>
+                        <label for="nova-fazenda-observacoes" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Observações</label>
+                        <textarea id="nova-fazenda-observacoes" class="form-textarea" rows="3" placeholder="Observações sobre a fazenda..."></textarea>
+                    </div>
+                </div>
+                <div class="flex space-x-4 mt-8">
+                    <button type="submit" class="btn-primary">
+                        <i class="fas fa-save mr-2"></i> Salvar Fazenda
+                    </button>
+                    <button type="button" class="close-modal-fazenda btn-secondary">
+                        <i class="fas fa-times mr-2"></i> Cancelar
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // *** SISTEMA DE GERENCIAMENTO DE DADOS COMPLETO ***
+        const DB = {
+            init: function() {
+                if (!localStorage.getItem('ggomes_data_initialized')) {
+                    this.createSampleData();
+                    localStorage.setItem('ggomes_data_initialized', 'true');
+                }
+            },
+            
+            createSampleData: function() {
+                const hoje = new Date().toISOString().split('T')[0];
+                const ontem = new Date();
+                ontem.setDate(ontem.getDate() - 1);
+                const dataOntem = ontem.toISOString().split('T')[0];
+                
+                // Data para prazo de liberações (7 dias a partir de hoje)
+                const prazoLiberacao = new Date();
+                prazoLiberacao.setDate(prazoLiberacao.getDate() + 7);
+                const dataPrazo = prazoLiberacao.toISOString().split('T')[0];
+                
+                // Dados mais realistas e completos
+                const sampleData = {
+                    colhedoras: [
+                        { 
+                            id: 'COL-001', 
+                            marca: 'John Deere', 
+                            modelo: '9670 STS', 
+                            ano: 2021, 
+                            status: 'ativa',
+                            horimetro: 1250.5,
+                            observacoes: 'Manutenção preventiva em dia'
+                        },
+                        { 
+                            id: 'COL-002', 
+                            marca: 'New Holland', 
+                            modelo: 'CR8.90', 
+                            ano: 2020, 
+                            status: 'ativa',
+                            horimetro: 1850.2,
+                            observacoes: 'Operação normal'
+                        },
+                        { 
+                            id: 'COL-003', 
+                            marca: 'Case IH', 
+                            modelo: 'Axial-Flow 9250', 
+                            ano: 2022, 
+                            status: 'manutencao',
+                            horimetro: 780.3,
+                            observacoes: 'Substituição de correia transportadora'
+                        },
+                        { 
+                            id: 'COL-004', 
+                            marca: 'Massey Ferguson', 
+                            modelo: 'Ideal 9T', 
+                            ano: 2023, 
+                            status: 'ativa',
+                            horimetro: 450.8,
+                            observacoes: 'Máquina nova'
+                        }
+                    ],
+                    registros: [
+                        { 
+                            id: 'REG-001', 
+                            data: dataOntem, 
+                            colhedoraId: 'COL-001', 
+                            cultura: 'Soja', 
+                            quantidade: 145.5, 
+                            horas: 8.5,
+                            operador: 'João Silva',
+                            observacoes: 'Condições ideais de colheita'
+                        },
+                        { 
+                            id: 'REG-002', 
+                            data: dataOntem, 
+                            colhedoraId: 'COL-002', 
+                            cultura: 'Milho', 
+                            quantidade: 168.2, 
+                            horas: 9.0,
+                            operador: 'Pedro Santos',
+                            observacoes: 'Alta produtividade'
+                        },
+                        { 
+                            id: 'REG-003', 
+                            data: hoje, 
+                            colhedoraId: 'COL-001', 
+                            cultura: 'Cana de açúcar', 
+                            quantidade: 138.6, 
+                            horas: 7.5,
+                            operador: 'João Silva',
+                            observacoes: 'Primeira colheita de cana da temporada'
+                        },
+                        { 
+                            id: 'REG-004', 
+                            data: hoje, 
+                            colhedoraId: 'COL-004', 
+                            cultura: 'Soja', 
+                            quantidade: 162.4, 
+                            horas: 8.5,
+                            operador: 'Carlos Lima',
+                            observacoes: 'Primeira colheita da máquina nova'
+                        }
+                    ],
+                    fazendas: [
+                        {
+                            id: 'FAZ-001',
+                            nome: 'Fazenda São João',
+                            localidade: 'Zona Rural - Sorriso/MT',
+                            areaTotal: 2500.0,
+                            observacoes: 'Fazenda principal com infraestrutura completa'
+                        },
+                        {
+                            id: 'FAZ-002',
+                            nome: 'Fazenda Santa Maria',
+                            localidade: 'Zona Rural - Lucas do Rio Verde/MT',
+                            areaTotal: 1800.0,
+                            observacoes: 'Especializada em soja e milho'
+                        },
+                        {
+                            id: 'FAZ-003',
+                            nome: 'Fazenda Boa Vista',
+                            localidade: 'Zona Rural - Campo Novo do Parecis/MT',
+                            areaTotal: 1200.0,
+                            observacoes: 'Área de expansão recente'
+                        },
+                        {
+                            id: 'FAZ-004',
+                            nome: 'Fazenda Esperança',
+                            localidade: 'Zona Rural - Sinop/MT',
+                            areaTotal: 3000.0,
+                            observacoes: 'Maior propriedade do grupo'
+                        },
+                        {
+                            id: 'FAZ-005',
+                            nome: 'Fazenda Progresso',
+                            localidade: 'Zona Rural - Primavera do Leste/MT',
+                            areaTotal: 1500.0,
+                            observacoes: 'Foco em culturas diversificadas'
+                        }
+                    ],
+                    liberacoes: [
+                        {
+                            id: 'LIB-001',
+                            numero: 'LIB-001',
+                            fazenda: 'Fazenda São João',
+                            frente: 'Frente A',
+                            cultura: 'Soja',
+                            previsto: 850.0,
+                            realizado: 425.5,
+                            prazo: dataPrazo,
+                            area: 120.5,
+                            responsavel: 'João Silva',
+                            observacoes: 'Primeira etapa da safra',
+                            status: 'em_andamento',
+                            dataInicio: hoje
+                        },
+                        {
+                            id: 'LIB-002',
+                            numero: 'LIB-002',
+                            fazenda: 'Fazenda Santa Maria',
+                            frente: 'Frente B',
+                            cultura: 'Cana de açúcar',
+                            previsto: 650.0,
+                            realizado: 180.2,
+                            prazo: dataPrazo,
+                            area: 95.8,
+                            responsavel: 'Pedro Santos',
+                            observacoes: 'Área com alta produtividade de cana',
+                            status: 'em_andamento',
+                            dataInicio: ontem.toISOString().split('T')[0]
+                        },
+                        {
+                            id: 'LIB-003',
+                            numero: 'LIB-003',
+                            fazenda: 'Fazenda Boa Vista',
+                            frente: 'Frente C',
+                            cultura: 'Milho',
+                            previsto: 520.0,
+                            realizado: 520.0,
+                            prazo: ontem.toISOString().split('T')[0],
+                            area: 78.5,
+                            responsavel: 'Carlos Lima',
+                            observacoes: 'Liberação concluída no prazo',
+                            status: 'concluida',
+                            dataInicio: new Date(hoje.getTime() - 10 * 24 * 60 * 60 * 1000).toISOString().split('T')[0]
+                        }
+                    ],
+                    notifications: [
+                        {
+                            id: 'notif-1',
+                            type: 'success',
+                            title: 'Sistema Inicializado',
+                            message: 'GGOMES-LOG v2.0 foi iniciado com sucesso!',
+                            timestamp: new Date().toISOString(),
+                            read: false
+                        },
+                        {
+                            id: 'notif-2',
+                            type: 'warning',
+                            title: 'Manutenção Programada',
+                            message: 'Colhedora COL-003 necessita manutenção preventiva.',
+                            timestamp: new Date().toISOString(),
+                            read: false
+                        },
+                        {
+                            id: 'notif-3',
+                            type: 'info',
+                            title: 'Liberação Concluída',
+                            message: 'Liberação LIB-003 foi concluída com sucesso!',
+                            timestamp: new Date().toISOString(),
+                            read: false
+                        }
+                    ]
+                };
+                
+                Object.keys(sampleData).forEach(key => {
+                    localStorage.setItem(`ggomes_${key}`, JSON.stringify(sampleData[key]));
+                });
+            },
+            
+            get: function(table) {
+                return JSON.parse(localStorage.getItem(`ggomes_${table}`) || '[]');
+            },
+            
+            set: function(table, data) {
+                localStorage.setItem(`ggomes_${table}`, JSON.stringify(data));
+            },
+            
+            add: function(table, item) {
+                const data = this.get(table);
+                data.push(item);
+                this.set(table, data);
+                return item;
+            },
+            
+            update: function(table, id, updatedItem) {
+                const data = this.get(table);
+                const index = data.findIndex(item => item.id === id);
+                if (index !== -1) {
+                    data[index] = { ...data[index], ...updatedItem };
+                    this.set(table, data);
+                    return data[index];
+                }
+                return null;
+            },
+            
+            delete: function(table, id) {
+                const data = this.get(table);
+                const filteredData = data.filter(item => item.id !== id);
+                this.set(table, filteredData);
+                return filteredData;
+            },
+            
+            // Métodos específicos melhorados
+            colhedoras: {
+                getAll: () => DB.get('colhedoras'),
+                getActive: () => DB.get('colhedoras').filter(c => c.status === 'ativa'),
+                getByStatus: (status) => DB.get('colhedoras').filter(c => c.status === status),
+                add: (colhedora) => {
+                    const colhedoras = DB.get('colhedoras');
+                    const newColhedora = { 
+                        ...colhedora, 
+                        id: colhedora.id || `COL-${Date.now()}`,
+                        horimetro: colhedora.horimetro || 0,
+                        observacoes: colhedora.observacoes || ''
+                    };
+                    colhedoras.push(newColhedora);
+                    DB.set('colhedoras', colhedoras);
+                    return newColhedora;
+                },
+                update: (id, data) => DB.update('colhedoras', id, data),
+                delete: (id) => DB.delete('colhedoras', id)
+            },
+            
+            registros: {
+                getAll: () => DB.get('registros'),
+                getToday: () => {
+                    const hoje = new Date().toISOString().split('T')[0];
+                    return DB.get('registros').filter(r => r.data === hoje);
+                },
+                getByPeriod: (days) => {
+                    if (days === 0) return DB.get('registros');
+                    const date = new Date();
+                    date.setDate(date.getDate() - days);
+                    const cutoffDate = date.toISOString().split('T')[0];
+                    return DB.get('registros').filter(r => r.data >= cutoffDate);
+                },
+                add: (registro) => {
+                    const registros = DB.get('registros');
+                    const newRegistro = { 
+                        ...registro, 
+                        id: `REG-${Date.now()}`,
+                        operador: registro.operador || '',
+                        observacoes: registro.observacoes || ''
+                    };
+                    registros.push(newRegistro);
+                    DB.set('registros', registros);
+                    return newRegistro;
+                },
+                update: (id, data) => DB.update('registros', id, data),
+                delete: (id) => DB.delete('registros', id)
+            },
+            
+            fazendas: {
+                getAll: () => DB.get('fazendas'),
+                add: (fazenda) => {
+                    const fazendas = DB.get('fazendas');
+                    const newFazenda = { 
+                        ...fazenda, 
+                        id: `FAZ-${Date.now()}`,
+                        areaTotal: fazenda.areaTotal || 0,
+                        observacoes: fazenda.observacoes || ''
+                    };
+                    fazendas.push(newFazenda);
+                    DB.set('fazendas', fazendas);
+                    return newFazenda;
+                },
+                update: (id, data) => DB.update('fazendas', id, data),
+                delete: (id) => DB.delete('fazendas', id)
+            },
+            
+            liberacoes: {
+                getAll: () => DB.get('liberacoes'),
+                getByStatus: (status) => DB.get('liberacoes').filter(l => l.status === status),
+                getActive: () => DB.get('liberacoes').filter(l => l.status === 'em_andamento'),
+                add: (liberacao) => {
+                    const liberacoes = DB.get('liberacoes');
+                    const newLiberacao = { 
+                        ...liberacao, 
+                        id: `LIB-${Date.now()}`,
+                        realizado: 0,
+                        status: 'em_andamento',
+                        dataInicio: new Date().toISOString().split('T')[0],
+                        observacoes: liberacao.observacoes || ''
+                    };
+                    liberacoes.push(newLiberacao);
+                    DB.set('liberacoes', liberacoes);
+                    return newLiberacao;
+                },
+                update: (id, data) => DB.update('liberacoes', id, data),
+                delete: (id) => DB.delete('liberacoes', id),
+                updateRealizado: (id, quantidade) => {
+                    const liberacoes = DB.get('liberacoes');
+                    const liberacao = liberacoes.find(l => l.id === id);
+                    if (liberacao) {
+                        liberacao.realizado = (liberacao.realizado || 0) + quantidade;
+                        if (liberacao.realizado >= liberacao.previsto) {
+                            liberacao.status = 'concluida';
+                        }
+                        DB.set('liberacoes', liberacoes);
+                        return liberacao;
+                    }
+                    return null;
+                }
+            },
+            
+            notifications: {
+                getAll: () => DB.get('notifications'),
+                getUnread: () => DB.get('notifications').filter(n => !n.read),
+                add: (notification) => {
+                    const notifications = DB.get('notifications');
+                    const newNotification = {
+                        ...notification,
+                        id: `notif-${Date.now()}`,
+                        timestamp: new Date().toISOString(),
+                        read: false
+                    };
+                    notifications.unshift(newNotification);
+                    DB.set('notifications', notifications);
+                    NotificationSystem.updateBadge();
+                    return newNotification;
+                },
+                markAsRead: (id) => {
+                    const notifications = DB.get('notifications');
+                    const notification = notifications.find(n => n.id === id);
+                    if (notification) {
+                        notification.read = true;
+                        DB.set('notifications', notifications);
+                        NotificationSystem.updateBadge();
+                    }
+                },
+                markAllAsRead: () => {
+                    const notifications = DB.get('notifications');
+                    notifications.forEach(n => n.read = true);
+                    DB.set('notifications', notifications);
+                    NotificationSystem.updateBadge();
+                }
+            }
+        };
+        
+        // *** SISTEMA DE NOTIFICAÇÕES COMPLETO ***
+        const NotificationSystem = {
+            init: function() {
+                this.setupEventListeners();
+                this.updateBadge();
+                this.loadNotifications();
+            },
+            
+            setupEventListeners: function() {
+                document.getElementById('btn-notifications').addEventListener('click', () => {
+                    this.togglePanel();
+                });
+                
+                document.getElementById('close-notifications').addEventListener('click', () => {
+                    this.closePanel();
+                });
+                
+                document.getElementById('btn-clear-notifications').addEventListener('click', () => {
+                    DB.notifications.markAllAsRead();
+                    this.loadNotifications();
+                    this.showToast('Todas as notificações foram marcadas como lidas', 'success');
+                });
+            },
+            
+            togglePanel: function() {
+                const panel = document.getElementById('notifications-panel');
+                panel.classList.toggle('translate-x-full');
+                if (!panel.classList.contains('translate-x-full')) {
+                    this.loadNotifications();
+                }
+            },
+            
+            closePanel: function() {
+                document.getElementById('notifications-panel').classList.add('translate-x-full');
+            },
+            
+            updateBadge: function() {
+                const unreadCount = DB.notifications.getUnread().length;
+                const badge = document.getElementById('notification-badge');
+                
+                if (unreadCount > 0) {
+                    badge.textContent = unreadCount > 99 ? '99+' : unreadCount;
+                    badge.classList.remove('hidden');
+                } else {
+                    badge.classList.add('hidden');
+                }
+            },
+            
+            loadNotifications: function() {
+                const notifications = DB.notifications.getAll();
+                const container = document.getElementById('notifications-list');
+                
+                if (notifications.length === 0) {
+                    container.innerHTML = `
+                        <div class="text-center text-gray-500 dark:text-gray-400 py-12">
+                            <i class="fas fa-bell-slash text-6xl mb-6 opacity-50"></i>
+                            <p class="text-xl font-semibold mb-2">Nenhuma notificação</p>
+                            <p class="text-sm">Você está em dia com todas as informações</p>
+                        </div>
+                    `;
+                    return;
+                }
+                
+                container.innerHTML = notifications.map(notification => this.createNotificationHTML(notification)).join('');
+                
+                container.querySelectorAll('.notification-item').forEach(item => {
+                    item.addEventListener('click', (e) => {
+                        const id = e.currentTarget.dataset.id;
+                        DB.notifications.markAsRead(id);
+                        this.loadNotifications();
+                    });
+                });
+            },
+            
+            createNotificationHTML: function(notification) {
+                const timeAgo = this.getTimeAgo(notification.timestamp);
+                const iconClass = {
+                    success: 'fa-check-circle text-green-500',
+                    warning: 'fa-exclamation-triangle text-yellow-500',
+                    error: 'fa-exclamation-circle text-red-500',
+                    info: 'fa-info-circle text-blue-500'
+                }[notification.type] || 'fa-info-circle text-blue-500';
+                
+                return `
+                    <div class="notification-item p-4 rounded-xl border ${notification.read ? 'bg-gray-50 dark:bg-gray-700 border-gray-200 dark:border-gray-600' : 'bg-blue-50 dark:bg-blue-900/30 border-blue-200 dark:border-blue-700'} cursor-pointer hover:shadow-md transition-all duration-200" data-id="${notification.id}" data-type="${notification.type}">
+                        <div class="flex items-start space-x-3">
+                            <div class="flex-shrink-0">
+                                <i class="fas ${iconClass} text-xl"></i>
+                            </div>
+                            <div class="flex-1 min-w-0">
+                                <h4 class="text-sm font-semibold text-gray-900 dark:text-white">${notification.title}</h4>
+                                <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">${notification.message}</p>
+                                <div class="flex items-center justify-between mt-2">
+                                    <span class="text-xs text-gray-500 dark:text-gray-500">${timeAgo}</span>
+                                    ${!notification.read ? '<span class="w-2 h-2 bg-blue-500 rounded-full"></span>' : ''}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            },
+            
+            getTimeAgo: function(timestamp) {
+                const now = new Date();
+                const time = new Date(timestamp);
+                const diffInSeconds = Math.floor((now - time) / 1000);
+                
+                if (diffInSeconds < 60) return 'Agora mesmo';
+                if (diffInSeconds < 3600) return `${Math.floor(diffInSeconds / 60)}min atrás`;
+                if (diffInSeconds < 86400) return `${Math.floor(diffInSeconds / 3600)}h atrás`;
+                return `${Math.floor(diffInSeconds / 86400)}d atrás`;
+            },
+            
+            showToast: function(message, type = 'info', duration = 3000) {
+                const toast = this.createToast(message, type);
+                document.getElementById('toast-container').appendChild(toast);
+                
+                setTimeout(() => {
+                    this.removeToast(toast);
+                }, duration);
+            },
+            
+            createToast: function(message, type) {
+                const toast = document.createElement('div');
+                toast.className = `notification-enter bg-white dark:bg-gray-800 rounded-xl shadow-xl p-4 border-l-4 ${
+                    type === 'success' ? 'border-green-500' :
+                    type === 'error' ? 'border-red-500' :
+                    type === 'warning' ? 'border-yellow-500' :
+                    'border-blue-500'
+                } max-w-sm`;
+                
+                toast.innerHTML = `
+                    <div class="flex items-start">
+                        <div class="flex-shrink-0">
+                            <i class="fas ${
+                                type === 'success' ? 'fa-check-circle text-green-500' :
+                                type === 'error' ? 'fa-exclamation-circle text-red-500' :
+                                type === 'warning' ? 'fa-exclamation-triangle text-yellow-500' :
+                                'fa-info-circle text-blue-500'
+                            } text-xl"></i>
+                        </div>
+                        <div class="ml-3 flex-1">
+                            <p class="text-sm font-medium text-gray-900 dark:text-white">${message}</p>
+                        </div>
+                        <button class="close-toast ml-4 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                `;
+                
+                toast.querySelector('.close-toast').addEventListener('click', () => {
+                    this.removeToast(toast);
+                });
+                
+                return toast;
+            },
+            
+            removeToast: function(toast) {
+                toast.classList.remove('notification-enter');
+                toast.classList.add('notification-exit');
+                
+                setTimeout(() => {
+                    if (toast.parentNode) {
+                        toast.parentNode.removeChild(toast);
+                    }
+                }, 300);
+            }
+        };
+        
+        // *** SISTEMA DE BUSCA GLOBAL COMPLETO ***
+        const SearchSystem = {
+            init: function() {
+                this.setupEventListeners();
+            },
+            
+            setupEventListeners: function() {
+                const searchBtn = document.getElementById('btn-search');
+                const searchModal = document.getElementById('search-modal');
+                const searchInput = document.getElementById('search-input');
+                const closeSearch = document.getElementById('close-search');
+                
+                searchBtn.addEventListener('click', () => {
+                    this.openModal();
+                });
+                
+                closeSearch.addEventListener('click', () => {
+                    this.closeModal();
+                });
+                
+                document.addEventListener('keydown', (e) => {
+                    if (e.ctrlKey && e.key === 'k') {
+                        e.preventDefault();
+                        this.openModal();
+                    } else if (e.key === 'Escape') {
+                        this.closeModal();
+                    }
+                });
+                
+                let searchTimeout;
+                searchInput.addEventListener('input', (e) => {
+                    clearTimeout(searchTimeout);
+                    searchTimeout = setTimeout(() => {
+                        this.performSearch(e.target.value);
+                    }, 300);
+                });
+                
+                searchModal.addEventListener('click', (e) => {
+                    if (e.target === searchModal) {
+                        this.closeModal();
+                    }
+                });
+            },
+            
+            openModal: function() {
+                document.getElementById('search-modal').classList.remove('hidden');
+                document.getElementById('search-input').focus();
+            },
+            
+            closeModal: function() {
+                document.getElementById('search-modal').classList.add('hidden');
+                document.getElementById('search-input').value = '';
+                this.clearResults();
+            },
+            
+            performSearch: function(query) {
+                if (!query.trim()) {
+                    this.clearResults();
+                    return;
+                }
+                
+                const results = this.searchInData(query);
+                this.displayResults(results);
+            },
+            
+            searchInData: function(query) {
+                const results = [];
+                const lowerQuery = query.toLowerCase();
+                
+                // Buscar em colhedoras
+                const colhedoras = DB.colhedoras.getAll();
+                colhedoras.forEach(colhedora => {
+                    if (colhedora.id.toLowerCase().includes(lowerQuery) ||
+                        colhedora.marca.toLowerCase().includes(lowerQuery) ||
+                        colhedora.modelo.toLowerCase().includes(lowerQuery)) {
+                        results.push({
+                            type: 'colhedora',
+                            title: `${colhedora.marca} ${colhedora.modelo}`,
+                            subtitle: `ID: ${colhedora.id} - Status: ${colhedora.status}`,
+                            icon: 'fa-tractor',
+                            action: () => this.navigateToPage('colhedoras')
+                        });
+                    }
+                });
+                
+                // Buscar em registros
+                const registros = DB.registros.getAll();
+                registros.forEach(registro => {
+                    if (registro.colhedoraId.toLowerCase().includes(lowerQuery) ||
+                        registro.cultura.toLowerCase().includes(lowerQuery) ||
+                        (registro.operador && registro.operador.toLowerCase().includes(lowerQuery))) {
+                        results.push({
+                            type: 'registro',
+                            title: `Registro de ${registro.cultura}`,
+                            subtitle: `${registro.colhedoraId} - ${registro.quantidade}T - ${registro.data}`,
+                            icon: 'fa-file-alt',
+                            action: () => this.navigateToPage('registros')
+                        });
+                    }
+                });
+                
+                // Buscar em liberações
+                const liberacoes = DB.liberacoes.getAll();
+                liberacoes.forEach(liberacao => {
+                    if (liberacao.numero.toLowerCase().includes(lowerQuery) ||
+                        liberacao.fazenda.toLowerCase().includes(lowerQuery) ||
+                        liberacao.frente.toLowerCase().includes(lowerQuery) ||
+                        liberacao.cultura.toLowerCase().includes(lowerQuery)) {
+                        results.push({
+                            type: 'liberacao',
+                            title: `${liberacao.numero} - ${liberacao.fazenda}`,
+                            subtitle: `${liberacao.frente} - ${liberacao.cultura} - ${liberacao.previsto}T`,
+                            icon: 'fa-tasks',
+                            action: () => this.navigateToPage('liberacoes')
+                        });
+                    }
+                });
+                
+                // Buscar em fazendas
+                const fazendas = DB.fazendas.getAll();
+                fazendas.forEach(fazenda => {
+                    if (fazenda.nome.toLowerCase().includes(lowerQuery) ||
+                        fazenda.localidade.toLowerCase().includes(lowerQuery)) {
+                        results.push({
+                            type: 'fazenda',
+                            title: fazenda.nome,
+                            subtitle: `${fazenda.localidade} - ${fazenda.areaTotal}ha`,
+                            icon: 'fa-map-marker-alt',
+                            action: () => this.navigateToPage('liberacoes')
+                        });
+                    }
+                });
+                
+                return results.slice(0, 10);
+            },
+            
+            displayResults: function(results) {
+                const container = document.getElementById('search-results');
+                
+                if (results.length === 0) {
+                    container.innerHTML = `
+                        <div class="text-center text-gray-500 dark:text-gray-400 py-8">
+                            <i class="fas fa-search text-4xl mb-4 opacity-50"></i>
+                            <p class="text-lg">Nenhum resultado encontrado</p>
+                            <p class="text-sm mt-2">Tente usar termos diferentes</p>
+                        </div>
+                    `;
+                    return;
+                }
+                
+                container.innerHTML = results.map((result, index) => `
+                    <div class="search-result-item p-4 rounded-xl hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer transition-colors duration-200 border border-gray-200 dark:border-gray-700 mb-3" data-index="${index}">
+                        <div class="flex items-center space-x-3">
+                            <div class="flex-shrink-0">
+                                <i class="fas ${result.icon} text-xl text-primary-600 dark:text-primary-400"></i>
+                            </div>
+                            <div class="flex-1">
+                                <h4 class="text-sm font-semibold text-gray-900 dark:text-white">${result.title}</h4>
+                                <p class="text-sm text-gray-600 dark:text-gray-400">${result.subtitle}</p>
+                            </div>
+                            <div class="text-gray-400">
+                                <i class="fas fa-arrow-right"></i>
+                            </div>
+                        </div>
+                    </div>
+                `).join('');
+                
+                // Adicionar event listeners
+                container.querySelectorAll('.search-result-item').forEach((item, index) => {
+                    item.addEventListener('click', () => {
+                        results[index].action();
+                        this.closeModal();
+                    });
+                });
+            },
+            
+            clearResults: function() {
+                document.getElementById('search-results').innerHTML = `
+                    <div class="text-center text-gray-500 dark:text-gray-400 py-8">
+                        <i class="fas fa-search text-4xl mb-4 opacity-50"></i>
+                        <p class="text-lg">Digite para buscar...</p>
+                        <p class="text-sm mt-2">Busque por colhedoras, registros, liberações e muito mais</p>
+                    </div>
+                `;
+            },
+            
+            navigateToPage: function(page) {
+                const link = document.querySelector(`a[href="#${page}"]`);
+                if (link) {
+                    link.click();
+                }
+            }
+        };
+        
+        // *** SISTEMA DE NAVEGAÇÃO COMPLETO ***
+        const NavigationSystem = {
+            init: function() {
+                this.setupSidebarNavigation();
+                this.setupMobileMenu();
+            },
+            
+            setupSidebarNavigation: function() {
+                const links = document.querySelectorAll('.sidebar-link');
+                
+                links.forEach(link => {
+                    link.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        
+                        const targetId = link.getAttribute('href').substring(1);
+                        this.navigateToPage(targetId);
+                        
+                        this.updateBreadcrumb(link.textContent.trim());
+                        this.closeMobileMenu();
+                    });
+                });
+            },
+            
+            setupMobileMenu: function() {
+                const menuToggle = document.getElementById('mobile-menu-toggle');
+                const overlay = document.getElementById('sidebar-overlay');
+                
+                menuToggle.addEventListener('click', () => {
+                    this.toggleMobileMenu();
+                });
+                
+                overlay.addEventListener('click', () => {
+                    this.closeMobileMenu();
+                });
+            },
+            
+            navigateToPage: function(pageId) {
+                document.querySelectorAll('.content').forEach(content => {
+                    content.classList.add('hidden');
+                });
+                
+                const targetPage = document.getElementById(`content-${pageId}`);
+                if (targetPage) {
+                    targetPage.classList.remove('hidden');
+                    
+                    // Carregar dados específicos da página
+                    switch(pageId) {
+                        case 'dashboard':
+                            DashboardSystem.loadDashboardData();
+                            break;
+                        case 'colhedoras':
+                            ColhedorasManager.loadData();
+                            break;
+                        case 'registros':
+                            RegistrosManager.loadData();
+                            break;
+                        case 'liberacoes':
+                            LiberacoesManager.loadData();
+                            break;
+                    }
+                }
+                
+                document.querySelectorAll('.sidebar-link').forEach(link => {
+                    link.classList.remove('active', 'gradient-primary', 'text-white');
+                    link.classList.add('text-gray-700', 'dark:text-gray-300');
+                });
+                
+                const activeLink = document.querySelector(`a[href="#${pageId}"]`);
+                if (activeLink) {
+                    activeLink.classList.add('active', 'gradient-primary', 'text-white');
+                    activeLink.classList.remove('text-gray-700', 'dark:text-gray-300');
+                }
+            },
+            
+            updateBreadcrumb: function(pageName) {
+                document.getElementById('breadcrumb-current').textContent = pageName;
+            },
+            
+            toggleMobileMenu: function() {
+                const sidebar = document.getElementById('sidebar');
+                const overlay = document.getElementById('sidebar-overlay');
+                
+                sidebar.classList.toggle('active');
+                overlay.classList.toggle('active');
+            },
+            
+            closeMobileMenu: function() {
+                document.getElementById('sidebar').classList.remove('active');
+                document.getElementById('sidebar-overlay').classList.remove('active');
+            }
+        };
+        
+        // *** SISTEMA DE DASHBOARD COMPLETO ***
+        const DashboardSystem = {
+            charts: {},
+            
+            init: function() {
+                this.setupFilters();
+                this.loadDashboardData();
+                this.updateLastRefreshTime();
+                this.initCharts();
+            },
+            
+            setupFilters: function() {
+                const refreshBtn = document.getElementById('refresh-dashboard');
+                
+                refreshBtn.addEventListener('click', () => {
+                    this.loadDashboardData();
+                    this.updateLastRefreshTime();
+                    NotificationSystem.showToast('Dashboard atualizado com sucesso', 'success');
+                });
+            },
+            
+            loadDashboardData: function() {
+                this.updateProductionCards();
+                this.updateQuickStats();
+                this.updateCharts();
+            },
+            
+            updateProductionCards: function() {
+                const registros = DB.registros.getAll();
+                const colhedoras = DB.colhedoras.getAll();
+                const liberacoes = DB.liberacoes.getAll();
+                
+                const totalGeral = registros.reduce((total, reg) => total + (parseFloat(reg.quantidade) || 0), 0);
+                const horasGerais = registros.reduce((total, reg) => total + (parseFloat(reg.horas) || 0), 0);
+                const rendimentoGeral = horasGerais > 0 ? totalGeral / horasGerais : 0;
+                
+                const colhedorasAtivas = colhedoras.filter(c => c.status === 'ativa').length;
+                const liberacoesAtivas = liberacoes.filter(l => l.status === 'em_andamento').length;
+                
+                document.getElementById('dash-total-colhido').textContent = `${totalGeral.toFixed(1)} T`;
+                document.getElementById('dash-colhedoras-ativas').textContent = colhedorasAtivas;
+                document.getElementById('dash-liberacoes-ativas').textContent = liberacoesAtivas;
+                document.getElementById('dash-media-hora').textContent = `${rendimentoGeral.toFixed(1)} T/h`;
+            },
+            
+            updateQuickStats: function() {
+                const colhedoras = DB.colhedoras.getAll();
+                const registros = DB.registros.getAll();
+                const liberacoes = DB.liberacoes.getAll();
+                
+                const totalColhido = registros.reduce((total, reg) => total + (parseFloat(reg.quantidade) || 0), 0);
+                const liberacoesAtivas = liberacoes.filter(l => l.status === 'em_andamento').length;
+                
+                document.getElementById('quick-total-colhido').textContent = `${totalColhido.toFixed(1)} T`;
+                document.getElementById('quick-colhedoras').textContent = colhedoras.length;
+                document.getElementById('quick-liberacoes').textContent = liberacoesAtivas;
+            },
+            
+            updateLastRefreshTime: function() {
+                const now = new Date();
+                document.getElementById('last-update').textContent = 
+                    now.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+            },
+            
+            initCharts: function() {
+                this.initProductionChart();
+            },
+            
+            initProductionChart: function() {
+                const ctx = document.getElementById('chart-producao-tempo');
+                if (!ctx) return;
+                
+                this.charts.producao = new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun'],
+                        datasets: [{
+                            label: 'Produção (T)',
+                            data: [1200, 1350, 1180, 1420, 1650, 1580],
+                            borderColor: '#5D5CDE',
+                            backgroundColor: 'rgba(93, 92, 222, 0.1)',
+                            tension: 0.4,
+                            fill: true
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                display: false
+                            }
+                        },
+                        scales: {
+                            y: {
+                                beginAtZero: true
+                            }
+                        }
+                    }
+                });
+            },
+            
+            updateCharts: function() {
+                Object.values(this.charts).forEach(chart => {
+                    if (chart) {
+                        chart.update();
+                    }
+                });
+            }
+        };
+        
+        // *** GERENCIADOR DE COLHEDORAS ***
+        const ColhedorasManager = {
+            init: function() {
+                this.setupEventListeners();
+                this.loadData();
+            },
+            
+            setupEventListeners: function() {
+                document.getElementById('btn-nova-colhedora').addEventListener('click', () => {
+                    this.showModal();
+                });
+                
+                document.getElementById('form-nova-colhedora').addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    this.saveColhedora();
+                });
+                
+                // Event listeners para fechar modal
+                document.querySelectorAll('.close-modal').forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        this.hideModal();
+                    });
+                });
+                
+                document.getElementById('modal-nova-colhedora').addEventListener('click', (e) => {
+                    if (e.target === e.currentTarget) {
+                        this.hideModal();
+                    }
+                });
+            },
+            
+            loadData: function() {
+                this.updateStats();
+                this.loadTable();
+                this.loadSelectOptions();
+            },
+            
+            updateStats: function() {
+                const colhedoras = DB.colhedoras.getAll();
+                const ativas = colhedoras.filter(c => c.status === 'ativa').length;
+                const manutencao = colhedoras.filter(c => c.status === 'manutencao').length;
+                const inativas = colhedoras.filter(c => c.status === 'inativa').length;
+                
+                document.getElementById('total-colhedoras-count').textContent = colhedoras.length;
+                document.getElementById('colhedoras-ativas-count').textContent = ativas;
+                document.getElementById('colhedoras-manutencao-count').textContent = manutencao;
+                document.getElementById('colhedoras-inativas-count').textContent = inativas;
+            },
+            
+            loadTable: function() {
+                const tbody = document.getElementById('tabela-colhedoras');
+                const colhedoras = DB.colhedoras.getAll();
+                
+                if (colhedoras.length === 0) {
+                    tbody.innerHTML = `
+                        <tr>
+                            <td colspan="5" class="px-6 py-12 text-center">
+                                <div class="flex flex-col items-center">
+                                    <i class="fas fa-tractor text-4xl text-gray-400 mb-4"></i>
+                                    <span class="text-gray-500 dark:text-gray-400 text-lg">Nenhuma colhedora cadastrada</span>
+                                    <button onclick="ColhedorasManager.showModal()" class="mt-4 btn-primary">
+                                        <i class="fas fa-plus mr-2"></i>Cadastrar Primeira Colhedora
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                    `;
+                    return;
+                }
+                
+                tbody.innerHTML = colhedoras.map(colhedora => {
+                    const statusClass = colhedora.status === 'ativa' ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200' : 
+                                       colhedora.status === 'manutencao' ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200' : 
+                                       'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200';
+                    
+                    const statusIcon = colhedora.status === 'ativa' ? 'fa-check-circle' : 
+                                      colhedora.status === 'manutencao' ? 'fa-tools' : 'fa-times-circle';
+                    
+                    return `
+                        <tr class="hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors duration-200">
+                            <td class="px-6 py-4">
+                                <div class="flex items-center">
+                                    <div class="w-10 h-10 bg-primary-100 dark:bg-primary-900 rounded-xl flex items-center justify-center mr-3">
+                                        <i class="fas fa-tractor text-primary-600 dark:text-primary-400"></i>
+                                    </div>
+                                    <div>
+                                        <div class="font-semibold text-gray-900 dark:text-white">${colhedora.id}</div>
+                                        <div class="text-sm text-gray-500 dark:text-gray-400">Ano ${colhedora.ano}</div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td class="px-6 py-4">
+                                <div class="font-semibold text-gray-900 dark:text-white">${colhedora.marca}</div>
+                                <div class="text-sm text-gray-500 dark:text-gray-400">${colhedora.modelo}</div>
+                            </td>
+                            <td class="px-6 py-4 text-center">
+                                <span class="font-semibold text-gray-900 dark:text-white">${colhedora.ano}</span>
+                            </td>
+                            <td class="px-6 py-4 text-center">
+                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${statusClass}">
+                                    <i class="fas ${statusIcon} mr-1"></i>
+                                    ${colhedora.status === 'ativa' ? 'Ativa' : colhedora.status === 'manutencao' ? 'Manutenção' : 'Inativa'}
+                                </span>
+                            </td>
+                            <td class="px-6 py-4 text-center">
+                                <div class="flex items-center justify-center space-x-2">
+                                    <button onclick="ColhedorasManager.editColhedora('${colhedora.id}')" class="text-blue-600 hover:text-blue-900 dark:text-blue-400 dark:hover:text-blue-300">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+                                    <button onclick="ColhedorasManager.deleteColhedora('${colhedora.id}')" class="text-red-600 hover:text-red-900 dark:text-red-400 dark:hover:text-red-300">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                    `;
+                }).join('');
+            },
+            
+            loadSelectOptions: function() {
+                const select = document.getElementById('registro-colhedora');
+                const colhedoras = DB.colhedoras.getActive();
+                
+                select.innerHTML = '<option value="">Selecione uma colhedora</option>' +
+                    colhedoras.map(c => `<option value="${c.id}">${c.id} - ${c.marca} ${c.modelo}</option>`).join('');
+            },
+            
+            showModal: function() {
+                document.getElementById('modal-nova-colhedora').classList.remove('hidden');
+                document.getElementById('nova-colhedora-id').focus();
+            },
+            
+            hideModal: function() {
+                document.getElementById('modal-nova-colhedora').classList.add('hidden');
+                document.getElementById('form-nova-colhedora').reset();
+            },
+            
+            saveColhedora: function() {
+                const formData = {
+                    id: document.getElementById('nova-colhedora-id').value,
+                    marca: document.getElementById('nova-colhedora-marca').value,
+                    modelo: document.getElementById('nova-colhedora-modelo').value,
+                    ano: parseInt(document.getElementById('nova-colhedora-ano').value),
+                    status: document.getElementById('nova-colhedora-status').value,
+                    horimetro: parseFloat(document.getElementById('nova-colhedora-horimetro').value) || 0,
+                    observacoes: document.getElementById('nova-colhedora-observacoes').value
+                };
+                
+                // Verificar se ID já existe
+                const existing = DB.colhedoras.getAll().find(c => c.id === formData.id);
+                if (existing) {
+                    NotificationSystem.showToast('ID da colhedora já existe!', 'error');
+                    return;
+                }
+                
+                DB.colhedoras.add(formData);
+                this.hideModal();
+                this.loadData();
+                NotificationSystem.showToast('Colhedora cadastrada com sucesso!', 'success');
+                
+                // Adicionar notificação
+                DB.notifications.add({
+                    type: 'success',
+                    title: 'Nova Colhedora',
+                    message: `Colhedora ${formData.id} foi cadastrada com sucesso`
+                });
+            },
+            
+            editColhedora: function(id) {
+                NotificationSystem.showToast('Funcionalidade de edição em desenvolvimento', 'info');
+            },
+            
+            deleteColhedora: function(id) {
+                if (confirm('Tem certeza que deseja excluir esta colhedora?')) {
+                    DB.colhedoras.delete(id);
+                    this.loadData();
+                    NotificationSystem.showToast('Colhedora excluída com sucesso!', 'success');
+                }
+            }
+        };
+        
+        // *** GERENCIADOR DE REGISTROS ***
+        const RegistrosManager = {
+            init: function() {
+                this.setupEventListeners();
+                this.loadData();
+            },
+            
+            setupEventListeners: function() {
+                document.getElementById('form-registro-producao').addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    this.saveRegistro();
+                });
+                
+                document.getElementById('btn-limpar-form-registro').addEventListener('click', () => {
+                    document.getElementById('form-registro-producao').reset();
+                    this.setDefaultDate();
+                });
+                
+                // Definir data padrão como hoje
+                this.setDefaultDate();
+            },
+            
+            setDefaultDate: function() {
+                const hoje = new Date().toISOString().split('T')[0];
+                document.getElementById('registro-data').value = hoje;
+            },
+            
+            loadData: function() {
+                this.loadColhedorasSelect();
+                this.loadRegistrosTable();
+            },
+            
+            loadColhedorasSelect: function() {
+                const select = document.getElementById('registro-colhedora');
+                const colhedoras = DB.colhedoras.getActive();
+                
+                select.innerHTML = '<option value="">Selecione uma colhedora</option>' +
+                    colhedoras.map(c => `<option value="${c.id}">${c.id} - ${c.marca} ${c.modelo}</option>`).join('');
+            },
+            
+            loadRegistrosTable: function() {
+                const tbody = document.getElementById('tabela-registros-producao');
+                const registros = DB.registros.getAll().sort((a, b) => new Date(b.data) - new Date(a.data));
+                const colhedoras = DB.colhedoras.getAll();
+                
+                if (registros.length === 0) {
+                    tbody.innerHTML = `
+                        <tr>
+                            <td colspan="6" class="px-6 py-12 text-center">
+                                <div class="flex flex-col items-center">
+                                    <i class="fas fa-file-alt text-4xl text-gray-400 mb-4"></i>
+                                    <span class="text-gray-500 dark:text-gray-400 text-lg">Nenhum registro de produção encontrado</span>
+                                    <button onclick="document.getElementById('registro-data').focus()" class="mt-4 btn-primary">
+                                        <i class="fas fa-plus mr-2"></i>Criar Primeiro Registro
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                    `;
+                    return;
+                }
+                
+                tbody.innerHTML = registros.map(registro => {
+                    const colhedora = colhedoras.find(c => c.id === registro.colhedoraId);
+                    const dataFormatada = new Date(registro.data + 'T00:00:00').toLocaleDateString('pt-BR');
+                    
+                    return `
+                        <tr class="hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors duration-200">
+                            <td class="px-6 py-4">
+                                <span class="font-semibold text-gray-900 dark:text-white">${dataFormatada}</span>
+                            </td>
+                            <td class="px-6 py-4">
+                                <div class="flex items-center">
+                                    <div class="w-8 h-8 bg-primary-100 dark:bg-primary-900 rounded-lg flex items-center justify-center mr-3">
+                                        <i class="fas fa-tractor text-primary-600 dark:text-primary-400 text-sm"></i>
+                                    </div>
+                                    <div>
+                                        <div class="font-semibold text-gray-900 dark:text-white">${registro.colhedoraId}</div>
+                                        ${colhedora ? `<div class="text-sm text-gray-500 dark:text-gray-400">${colhedora.marca} ${colhedora.modelo}</div>` : ''}
+                                    </div>
+                                </div>
+                            </td>
+                            <td class="px-6 py-4">
+                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                                    registro.cultura === 'Soja' ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200' :
+                                    registro.cultura === 'Milho' ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200' :
+                                    registro.cultura === 'Trigo' ? 'bg-orange-100 text-orange-800 dark:bg-orange-900 dark:text-orange-200' :
+                                    registro.cultura === 'Cana de açúcar' ? 'bg-amber-100 text-amber-800 dark:bg-amber-900 dark:text-amber-200' :
+                                    'bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200'
+                                }">
+                                    ${registro.cultura}
+                                </span>
+                            </td>
+                            <td class="px-6 py-4 text-right">
+                                <span class="font-semibold text-gray-900 dark:text-white">${parseFloat(registro.quantidade).toFixed(1)} T</span>
+                            </td>
+                            <td class="px-6 py-4 text-right">
+                                <span class="font-semibold text-gray-900 dark:text-white">${parseFloat(registro.horas).toFixed(1)}h</span>
+                            </td>
+                            <td class="px-6 py-4 text-center">
+                                <div class="flex items-center justify-center space-x-2">
+                                    <button onclick="RegistrosManager.editRegistro('${registro.id}')" class="text-blue-600 hover:text-blue-900 dark:text-blue-400 dark:hover:text-blue-300">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+                                    <button onclick="RegistrosManager.deleteRegistro('${registro.id}')" class="text-red-600 hover:text-red-900 dark:text-red-400 dark:hover:text-red-300">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                    `;
+                }).join('');
+            },
+            
+            saveRegistro: function() {
+                const formData = {
+                    data: document.getElementById('registro-data').value,
+                    colhedoraId: document.getElementById('registro-colhedora').value,
+                    cultura: document.getElementById('registro-cultura').value,
+                    quantidade: parseFloat(document.getElementById('registro-quantidade').value),
+                    horas: parseFloat(document.getElementById('registro-horas').value),
+                    operador: document.getElementById('registro-operador').value,
+                    observacoes: document.getElementById('registro-observacoes').value
+                };
+                
+                // Validações
+                if (!formData.data || !formData.colhedoraId || !formData.cultura || !formData.quantidade || !formData.horas) {
+                    NotificationSystem.showToast('Por favor, preencha todos os campos obrigatórios', 'error');
+                    return;
+                }
+                
+                if (formData.quantidade <= 0 || formData.horas <= 0) {
+                    NotificationSystem.showToast('Quantidade e horas devem ser maiores que zero', 'error');
+                    return;
+                }
+                
+                DB.registros.add(formData);
+                document.getElementById('form-registro-producao').reset();
+                this.setDefaultDate();
+                this.loadRegistrosTable();
+                
+                NotificationSystem.showToast('Registro de produção salvo com sucesso!', 'success');
+                
+                // Adicionar notificação
+                DB.notifications.add({
+                    type: 'success',
+                    title: 'Novo Registro',
+                    message: `Produção de ${formData.quantidade}T de ${formData.cultura} registrada para ${formData.colhedoraId}`
+                });
+                
+                // Atualizar dashboard se estiver visível
+                if (!document.getElementById('content-dashboard').classList.contains('hidden')) {
+                    DashboardSystem.loadDashboardData();
+                }
+            },
+            
+            editRegistro: function(id) {
+                NotificationSystem.showToast('Funcionalidade de edição em desenvolvimento', 'info');
+            },
+            
+            deleteRegistro: function(id) {
+                if (confirm('Tem certeza que deseja excluir este registro?')) {
+                    DB.registros.delete(id);
+                    this.loadRegistrosTable();
+                    NotificationSystem.showToast('Registro excluído com sucesso!', 'success');
+                    
+                    // Atualizar dashboard se estiver visível
+                    if (!document.getElementById('content-dashboard').classList.contains('hidden')) {
+                        DashboardSystem.loadDashboardData();
+                    }
+                }
+            }
+        };
+        
+        // *** GERENCIADOR DE FAZENDAS ***
+        const FazendasManager = {
+            init: function() {
+                this.setupEventListeners();
+            },
+            
+            setupEventListeners: function() {
+                document.getElementById('btn-nova-fazenda').addEventListener('click', () => {
+                    this.showModal();
+                });
+                
+                document.getElementById('form-nova-fazenda').addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    this.saveFazenda();
+                });
+                
+                // Event listeners para fechar modal
+                document.querySelectorAll('.close-modal-fazenda').forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        this.hideModal();
+                    });
+                });
+                
+                document.getElementById('modal-nova-fazenda').addEventListener('click', (e) => {
+                    if (e.target === e.currentTarget) {
+                        this.hideModal();
+                    }
+                });
+            },
+            
+            showModal: function() {
+                document.getElementById('modal-nova-fazenda').classList.remove('hidden');
+                document.getElementById('nova-fazenda-nome').focus();
+            },
+            
+            hideModal: function() {
+                document.getElementById('modal-nova-fazenda').classList.add('hidden');
+                document.getElementById('form-nova-fazenda').reset();
+            },
+            
+            saveFazenda: function() {
+                const formData = {
+                    nome: document.getElementById('nova-fazenda-nome').value,
+                    localidade: document.getElementById('nova-fazenda-localidade').value,
+                    areaTotal: parseFloat(document.getElementById('nova-fazenda-area-total').value) || 0,
+                    observacoes: document.getElementById('nova-fazenda-observacoes').value
+                };
+                
+                // Validações
+                if (!formData.nome) {
+                    NotificationSystem.showToast('Por favor, preencha o nome da fazenda', 'error');
+                    return;
+                }
+                
+                // Verificar se nome já existe
+                const existing = DB.fazendas.getAll().find(f => f.nome.toLowerCase() === formData.nome.toLowerCase());
+                if (existing) {
+                    NotificationSystem.showToast('Nome da fazenda já existe!', 'error');
+                    return;
+                }
+                
+                const novaFazenda = DB.fazendas.add(formData);
+                this.hideModal();
+                
+                // Atualizar select de fazendas nas liberações
+                LiberacoesManager.loadFazendaSelects();
+                
+                // Selecionar a nova fazenda no select
+                const selectFazenda = document.getElementById('nova-liberacao-fazenda');
+                if (selectFazenda) {
+                    selectFazenda.value = novaFazenda.nome;
+                }
+                
+                NotificationSystem.showToast('Fazenda cadastrada com sucesso!', 'success');
+                
+                // Adicionar notificação
+                DB.notifications.add({
+                    type: 'success',
+                    title: 'Nova Fazenda',
+                    message: `Fazenda ${formData.nome} foi cadastrada com sucesso`
+                });
+            }
+        };
+        
+        // *** GERENCIADOR DE LIBERAÇÕES ***
+        const LiberacoesManager = {
+            init: function() {
+                this.setupEventListeners();
+                this.loadData();
+            },
+            
+            setupEventListeners: function() {
+                document.getElementById('btn-nova-liberacao').addEventListener('click', () => {
+                    this.showModal();
+                });
+                
+                document.getElementById('form-nova-liberacao').addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    this.saveLiberacao();
+                });
+                
+                // Event listeners para fechar modal
+                document.querySelectorAll('.close-modal-liberacao').forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        this.hideModal();
+                    });
+                });
+                
+                document.getElementById('modal-nova-liberacao').addEventListener('click', (e) => {
+                    if (e.target === e.currentTarget) {
+                        this.hideModal();
+                    }
+                });
+                
+                // Event listeners para filtros
+                document.getElementById('filtro-status-liberacoes').addEventListener('change', () => {
+                    this.applyFilters();
+                });
+                
+                document.getElementById('filtro-fazenda-liberacoes').addEventListener('change', () => {
+                    this.applyFilters();
+                });
+                
+                document.getElementById('busca-liberacoes').addEventListener('input', () => {
+                    this.applyFilters();
+                });
+                
+                document.getElementById('btn-limpar-filtros-liberacoes').addEventListener('click', () => {
+                    this.clearFilters();
+                });
+            },
+            
+            loadData: function() {
+                this.updateStats();
+                this.loadTable();
+                this.loadFazendaSelects();
+            },
+            
+            updateStats: function() {
+                const liberacoes = DB.liberacoes.getAll();
+                const emAndamento = liberacoes.filter(l => l.status === 'em_andamento').length;
+                const concluidas = liberacoes.filter(l => l.status === 'concluida').length;
+                const totalPrevisto = liberacoes.reduce((total, l) => total + (parseFloat(l.previsto) || 0), 0);
+                
+                document.getElementById('total-liberacoes-count').textContent = liberacoes.length;
+                document.getElementById('liberacoes-andamento-count').textContent = emAndamento;
+                document.getElementById('liberacoes-concluidas-count').textContent = concluidas;
+                document.getElementById('total-previsto-liberacoes').textContent = `${totalPrevisto.toFixed(1)} T`;
+            },
+            
+            loadTable: function() {
+                const tbody = document.getElementById('tabela-liberacoes');
+                const liberacoes = DB.liberacoes.getAll().sort((a, b) => new Date(b.dataInicio) - new Date(a.dataInicio));
+                
+                if (liberacoes.length === 0) {
+                    tbody.innerHTML = `
+                        <tr>
+                            <td colspan="8" class="px-6 py-12 text-center">
+                                <div class="flex flex-col items-center">
+                                    <i class="fas fa-tasks text-4xl text-gray-400 mb-4"></i>
+                                    <span class="text-gray-500 dark:text-gray-400 text-lg">Nenhuma liberação cadastrada</span>
+                                    <button onclick="LiberacoesManager.showModal()" class="mt-4 btn-primary">
+                                        <i class="fas fa-plus mr-2"></i>Cadastrar Primeira Liberação
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                    `;
+                    return;
+                }
+                
+                tbody.innerHTML = liberacoes.map(liberacao => {
+                    const tRestante = Math.max(0, parseFloat(liberacao.previsto) - parseFloat(liberacao.realizado || 0));
+                    const progresso = parseFloat(liberacao.previsto) > 0 ? 
+                        (parseFloat(liberacao.realizado || 0) / parseFloat(liberacao.previsto)) * 100 : 0;
+                    
+                    // Determinar status automaticamente baseado na data
+                    let status = liberacao.status;
+                    const hoje = new Date().toISOString().split('T')[0];
+                    if (liberacao.prazo < hoje && status === 'em_andamento') {
+                        status = 'atrasada';
+                    }
+                    
+                    const statusClass = status === 'concluida' ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200' : 
+                                       status === 'em_andamento' ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200' : 
+                                       'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200';
+                    
+                    const statusIcon = status === 'concluida' ? 'fa-check-circle' : 
+                                      status === 'em_andamento' ? 'fa-clock' : 'fa-exclamation-triangle';
+                    
+                    const statusText = status === 'concluida' ? 'Concluída' : 
+                                      status === 'em_andamento' ? 'Em Andamento' : 'Atrasada';
+                    
+                    return `
+                        <tr class="hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors duration-200">
+                            <td class="px-6 py-4">
+                                <div class="flex items-center">
+                                    <div class="w-10 h-10 bg-purple-100 dark:bg-purple-900 rounded-xl flex items-center justify-center mr-3">
+                                        <i class="fas fa-tasks text-purple-600 dark:text-purple-400"></i>
+                                    </div>
+                                    <div>
+                                        <div class="font-semibold text-gray-900 dark:text-white">${liberacao.numero}</div>
+                                        <div class="text-sm text-gray-500 dark:text-gray-400">${liberacao.cultura}</div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td class="px-6 py-4">
+                                <div class="font-semibold text-gray-900 dark:text-white">${liberacao.fazenda}</div>
+                                <div class="text-sm text-gray-500 dark:text-gray-400">${liberacao.frente}</div>
+                            </td>
+                            <td class="px-6 py-4 text-right">
+                                <span class="font-semibold text-gray-900 dark:text-white">${parseFloat(liberacao.previsto).toFixed(1)} T</span>
+                            </td>
+                            <td class="px-6 py-4 text-right">
+                                <span class="font-semibold text-gray-900 dark:text-white">${parseFloat(liberacao.realizado || 0).toFixed(1)} T</span>
+                            </td>
+                            <td class="px-6 py-4 text-right">
+                                <span class="font-semibold ${tRestante > 0 ? 'text-orange-600 dark:text-orange-400' : 'text-green-600 dark:text-green-400'}">${tRestante.toFixed(1)} T</span>
+                            </td>
+                            <td class="px-6 py-4 text-center">
+                                <div class="flex items-center justify-center">
+                                    <div class="flex items-center space-x-2">
+                                        <div class="w-16 bg-gray-200 dark:bg-gray-700 rounded-full h-2">
+                                            <div class="h-2 rounded-full ${progresso >= 100 ? 'bg-green-500' : progresso >= 70 ? 'bg-yellow-500' : 'bg-blue-500'}" style="width: ${Math.min(100, progresso)}%"></div>
+                                        </div>
+                                        <span class="text-sm font-semibold text-gray-700 dark:text-gray-300 min-w-[3rem]">${progresso.toFixed(0)}%</span>
+                                    </div>
+                                </div>
+                            </td>
+                            <td class="px-6 py-4 text-center">
+                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${statusClass}">
+                                    <i class="fas ${statusIcon} mr-1"></i>
+                                    ${statusText}
+                                </span>
+                            </td>
+                            <td class="px-6 py-4 text-center">
+                                <div class="flex items-center justify-center space-x-2">
+                                    <button onclick="LiberacoesManager.editLiberacao('${liberacao.id}')" class="text-blue-600 hover:text-blue-900 dark:text-blue-400 dark:hover:text-blue-300">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+                                    <button onclick="LiberacoesManager.addProducao('${liberacao.id}')" class="text-green-600 hover:text-green-900 dark:text-green-400 dark:hover:text-green-300">
+                                        <i class="fas fa-plus"></i>
+                                    </button>
+                                    <button onclick="LiberacoesManager.deleteLiberacao('${liberacao.id}')" class="text-red-600 hover:text-red-900 dark:text-red-400 dark:hover:text-red-300">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                    `;
+                }).join('');
+            },
+            
+            loadFazendaSelects: function() {
+                const fazendas = DB.fazendas.getAll();
+                
+                // Atualizar select no modal de liberação
+                const selectLiberacao = document.getElementById('nova-liberacao-fazenda');
+                if (selectLiberacao) {
+                    selectLiberacao.innerHTML = '<option value="">Selecione a fazenda</option>' +
+                        fazendas.map(f => `<option value="${f.nome}">${f.nome}</option>`).join('');
+                }
+                
+                // Atualizar select no filtro
+                const selectFiltro = document.getElementById('filtro-fazenda-liberacoes');
+                if (selectFiltro) {
+                    selectFiltro.innerHTML = '<option value="">Todas as fazendas</option>' +
+                        fazendas.map(f => `<option value="${f.nome}">${f.nome}</option>`).join('');
+                }
+            },
+            
+            applyFilters: function() {
+                const statusFilter = document.getElementById('filtro-status-liberacoes').value;
+                const fazendaFilter = document.getElementById('filtro-fazenda-liberacoes').value;
+                const searchFilter = document.getElementById('busca-liberacoes').value.toLowerCase();
+                
+                let liberacoes = DB.liberacoes.getAll();
+                
+                if (statusFilter) {
+                    liberacoes = liberacoes.filter(l => l.status === statusFilter);
+                }
+                
+                if (fazendaFilter) {
+                    liberacoes = liberacoes.filter(l => l.fazenda === fazendaFilter);
+                }
+                
+                if (searchFilter) {
+                    liberacoes = liberacoes.filter(l => 
+                        l.numero.toLowerCase().includes(searchFilter) ||
+                        l.fazenda.toLowerCase().includes(searchFilter) ||
+                        l.frente.toLowerCase().includes(searchFilter) ||
+                        l.cultura.toLowerCase().includes(searchFilter)
+                    );
+                }
+                
+                this.renderFilteredTable(liberacoes);
+            },
+            
+            renderFilteredTable: function(liberacoes) {
+                const tbody = document.getElementById('tabela-liberacoes');
+                
+                if (liberacoes.length === 0) {
+                    tbody.innerHTML = `
+                        <tr>
+                            <td colspan="8" class="px-6 py-12 text-center">
+                                <div class="flex flex-col items-center">
+                                    <i class="fas fa-search text-4xl text-gray-400 mb-4"></i>
+                                    <span class="text-gray-500 dark:text-gray-400 text-lg">Nenhuma liberação encontrada</span>
+                                    <button onclick="LiberacoesManager.clearFilters()" class="mt-4 btn-secondary">
+                                        Limpar Filtros
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                    `;
+                    return;
+                }
+                
+                // Usar a mesma lógica do loadTable mas com a lista filtrada
+                tbody.innerHTML = liberacoes.map(liberacao => {
+                    const tRestante = Math.max(0, parseFloat(liberacao.previsto) - parseFloat(liberacao.realizado || 0));
+                    const progresso = parseFloat(liberacao.previsto) > 0 ? 
+                        (parseFloat(liberacao.realizado || 0) / parseFloat(liberacao.previsto)) * 100 : 0;
+                    
+                    let status = liberacao.status;
+                    const hoje = new Date().toISOString().split('T')[0];
+                    if (liberacao.prazo < hoje && status === 'em_andamento') {
+                        status = 'atrasada';
+                    }
+                    
+                    const statusClass = status === 'concluida' ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200' : 
+                                       status === 'em_andamento' ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200' : 
+                                       'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200';
+                    
+                    const statusIcon = status === 'concluida' ? 'fa-check-circle' : 
+                                      status === 'em_andamento' ? 'fa-clock' : 'fa-exclamation-triangle';
+                    
+                    const statusText = status === 'concluida' ? 'Concluída' : 
+                                      status === 'em_andamento' ? 'Em Andamento' : 'Atrasada';
+                    
+                    return `
+                        <tr class="hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors duration-200">
+                            <td class="px-6 py-4">
+                                <div class="flex items-center">
+                                    <div class="w-10 h-10 bg-purple-100 dark:bg-purple-900 rounded-xl flex items-center justify-center mr-3">
+                                        <i class="fas fa-tasks text-purple-600 dark:text-purple-400"></i>
+                                    </div>
+                                    <div>
+                                        <div class="font-semibold text-gray-900 dark:text-white">${liberacao.numero}</div>
+                                        <div class="text-sm text-gray-500 dark:text-gray-400">${liberacao.cultura}</div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td class="px-6 py-4">
+                                <div class="font-semibold text-gray-900 dark:text-white">${liberacao.fazenda}</div>
+                                <div class="text-sm text-gray-500 dark:text-gray-400">${liberacao.frente}</div>
+                            </td>
+                            <td class="px-6 py-4 text-right">
+                                <span class="font-semibold text-gray-900 dark:text-white">${parseFloat(liberacao.previsto).toFixed(1)} T</span>
+                            </td>
+                            <td class="px-6 py-4 text-right">
+                                <span class="font-semibold text-gray-900 dark:text-white">${parseFloat(liberacao.realizado || 0).toFixed(1)} T</span>
+                            </td>
+                            <td class="px-6 py-4 text-right">
+                                <span class="font-semibold ${tRestante > 0 ? 'text-orange-600 dark:text-orange-400' : 'text-green-600 dark:text-green-400'}">${tRestante.toFixed(1)} T</span>
+                            </td>
+                            <td class="px-6 py-4 text-center">
+                                <div class="flex items-center justify-center">
+                                    <div class="flex items-center space-x-2">
+                                        <div class="w-16 bg-gray-200 dark:bg-gray-700 rounded-full h-2">
+                                            <div class="h-2 rounded-full ${progresso >= 100 ? 'bg-green-500' : progresso >= 70 ? 'bg-yellow-500' : 'bg-blue-500'}" style="width: ${Math.min(100, progresso)}%"></div>
+                                        </div>
+                                        <span class="text-sm font-semibold text-gray-700 dark:text-gray-300 min-w-[3rem]">${progresso.toFixed(0)}%</span>
+                                    </div>
+                                </div>
+                            </td>
+                            <td class="px-6 py-4 text-center">
+                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${statusClass}">
+                                    <i class="fas ${statusIcon} mr-1"></i>
+                                    ${statusText}
+                                </span>
+                            </td>
+                            <td class="px-6 py-4 text-center">
+                                <div class="flex items-center justify-center space-x-2">
+                                    <button onclick="LiberacoesManager.editLiberacao('${liberacao.id}')" class="text-blue-600 hover:text-blue-900 dark:text-blue-400 dark:hover:text-blue-300">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+                                    <button onclick="LiberacoesManager.addProducao('${liberacao.id}')" class="text-green-600 hover:text-green-900 dark:text-green-400 dark:hover:text-green-300">
+                                        <i class="fas fa-plus"></i>
+                                    </button>
+                                    <button onclick="LiberacoesManager.deleteLiberacao('${liberacao.id}')" class="text-red-600 hover:text-red-900 dark:text-red-400 dark:hover:text-red-300">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                    `;
+                }).join('');
+            },
+            
+            clearFilters: function() {
+                document.getElementById('filtro-status-liberacoes').value = '';
+                document.getElementById('filtro-fazenda-liberacoes').value = '';
+                document.getElementById('busca-liberacoes').value = '';
+                this.loadTable();
+            },
+            
+            showModal: function() {
+                document.getElementById('modal-nova-liberacao').classList.remove('hidden');
+                document.getElementById('nova-liberacao-numero').focus();
+            },
+            
+            hideModal: function() {
+                document.getElementById('modal-nova-liberacao').classList.add('hidden');
+                document.getElementById('form-nova-liberacao').reset();
+            },
+            
+            saveLiberacao: function() {
+                const formData = {
+                    numero: document.getElementById('nova-liberacao-numero').value,
+                    fazenda: document.getElementById('nova-liberacao-fazenda').value,
+                    frente: document.getElementById('nova-liberacao-frente').value,
+                    cultura: document.getElementById('nova-liberacao-cultura').value,
+                    previsto: parseFloat(document.getElementById('nova-liberacao-previsto').value),
+                    prazo: document.getElementById('nova-liberacao-prazo').value,
+                    area: parseFloat(document.getElementById('nova-liberacao-area').value) || 0,
+                    responsavel: document.getElementById('nova-liberacao-responsavel').value,
+                    observacoes: document.getElementById('nova-liberacao-observacoes').value
+                };
+                
+                // Validações
+                if (!formData.numero || !formData.fazenda || !formData.frente || !formData.cultura || !formData.previsto || !formData.prazo) {
+                    NotificationSystem.showToast('Por favor, preencha todos os campos obrigatórios', 'error');
+                    return;
+                }
+                
+                if (formData.previsto <= 0) {
+                    NotificationSystem.showToast('Quantidade prevista deve ser maior que zero', 'error');
+                    return;
+                }
+                
+                // Verificar se número já existe
+                const existing = DB.liberacoes.getAll().find(l => l.numero === formData.numero);
+                if (existing) {
+                    NotificationSystem.showToast('Número da liberação já existe!', 'error');
+                    return;
+                }
+                
+                DB.liberacoes.add(formData);
+                this.hideModal();
+                this.loadData();
+                NotificationSystem.showToast('Liberação cadastrada com sucesso!', 'success');
+                
+                // Adicionar notificação
+                DB.notifications.add({
+                    type: 'success',
+                    title: 'Nova Liberação',
+                    message: `Liberação ${formData.numero} foi cadastrada para ${formData.fazenda}`
+                });
+                
+                // Atualizar dashboard se estiver visível
+                if (!document.getElementById('content-dashboard').classList.contains('hidden')) {
+                    DashboardSystem.loadDashboardData();
+                }
+            },
+            
+            editLiberacao: function(id) {
+                NotificationSystem.showToast('Funcionalidade de edição em desenvolvimento', 'info');
+            },
+            
+            addProducao: function(id) {
+                const quantidade = prompt('Digite a quantidade produzida (T):');
+                if (quantidade && !isNaN(quantidade) && parseFloat(quantidade) > 0) {
+                    const liberacao = DB.liberacoes.updateRealizado(id, parseFloat(quantidade));
+                    if (liberacao) {
+                        this.loadData();
+                        NotificationSystem.showToast(`${quantidade}T adicionadas à liberação ${liberacao.numero}`, 'success');
+                        
+                        if (liberacao.status === 'concluida') {
+                            DB.notifications.add({
+                                type: 'success',
+                                title: 'Liberação Concluída',
+                                message: `Liberação ${liberacao.numero} foi concluída!`
+                            });
+                        }
+                        
+                        // Atualizar dashboard se estiver visível
+                        if (!document.getElementById('content-dashboard').classList.contains('hidden')) {
+                            DashboardSystem.loadDashboardData();
+                        }
+                    }
+                }
+            },
+            
+            deleteLiberacao: function(id) {
+                if (confirm('Tem certeza que deseja excluir esta liberação?')) {
+                    DB.liberacoes.delete(id);
+                    this.loadData();
+                    NotificationSystem.showToast('Liberação excluída com sucesso!', 'success');
+                    
+                    // Atualizar dashboard se estiver visível
+                    if (!document.getElementById('content-dashboard').classList.contains('hidden')) {
+                        DashboardSystem.loadDashboardData();
+                    }
+                }
+            }
+        };
+        
+        // *** SISTEMA DE TEMA COMPLETO ***
+        const ThemeSystem = {
+            init: function() {
+                this.setupThemeToggle();
+                this.detectSystemTheme();
+                this.applySavedTheme();
+            },
+            
+            setupThemeToggle: function() {
+                const toggleBtn = document.getElementById('toggle-theme');
+                
+                toggleBtn.addEventListener('click', () => {
+                    this.toggleTheme();
+                });
+            },
+            
+            detectSystemTheme: function() {
+                if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+                    document.documentElement.classList.add('dark');
+                } else {
+                    document.documentElement.classList.remove('dark');
+                }
+                
+                window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', event => {
+                    if (!localStorage.getItem('ggomes_theme_override')) {
+                        if (event.matches) {
+                            document.documentElement.classList.add('dark');
+                        } else {
+                            document.documentElement.classList.remove('dark');
+                        }
+                    }
+                });
+            },
+            
+            applySavedTheme: function() {
+                const savedTheme = localStorage.getItem('ggomes_theme_override');
+                if (savedTheme) {
+                    if (savedTheme === 'dark') {
+                        document.documentElement.classList.add('dark');
+                    } else {
+                        document.documentElement.classList.remove('dark');
+                    }
+                }
+            },
+            
+            toggleTheme: function() {
+                const isDark = document.documentElement.classList.contains('dark');
+                
+                if (isDark) {
+                    document.documentElement.classList.remove('dark');
+                    localStorage.setItem('ggomes_theme_override', 'light');
+                } else {
+                    document.documentElement.classList.add('dark');
+                    localStorage.setItem('ggomes_theme_override', 'dark');
+                }
+                
+                NotificationSystem.showToast(`Tema alterado para ${isDark ? 'claro' : 'escuro'}`, 'info', 2000);
+            }
+        };
+        
+        // *** UTILITÁRIOS COMPLETOS ***
+        const Utils = {
+            updateDateTime: function() {
+                const now = new Date();
+                
+                document.getElementById('current-date').textContent = 
+                    now.toLocaleDateString('pt-BR');
+                
+                document.getElementById('current-time').textContent = 
+                    now.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+                
+                // Simular dados meteorológicos
+                const temp = Math.floor(Math.random() * (32 - 18 + 1)) + 18;
+                const hour = now.getHours();
+                let weatherIcon = '';
+                
+                if (hour >= 6 && hour < 18) {
+                    if (temp > 28) {
+                        weatherIcon = '<i class="fas fa-sun animate-pulse-soft"></i>';
+                    } else if (temp > 22) {
+                        weatherIcon = '<i class="fas fa-cloud-sun"></i>';
+                    } else {
+                        weatherIcon = '<i class="fas fa-cloud"></i>';
+                    }
+                } else {
+                    weatherIcon = '<i class="fas fa-moon"></i>';
+                }
+                
+                document.getElementById('weather-icon').innerHTML = weatherIcon;
+                document.getElementById('weather-temp').textContent = `${temp}°C`;
+            },
+            
+            formatNumber: function(num, decimals = 1) {
+                return num.toLocaleString('pt-BR', { 
+                    minimumFractionDigits: decimals, 
+                    maximumFractionDigits: decimals 
+                });
+            },
+            
+            formatDate: function(dateString) {
+                if (!dateString) return '--/--/----';
+                const date = new Date(dateString + 'T00:00:00');
+                return date.toLocaleDateString('pt-BR');
+            },
+            
+            formatCurrency: function(value) {
+                return new Intl.NumberFormat('pt-BR', {
+                    style: 'currency',
+                    currency: 'BRL'
+                }).format(value);
+            }
+        };
+        
+        // *** INICIALIZAÇÃO COMPLETA DO SISTEMA ***
+        document.addEventListener('DOMContentLoaded', function() {
+            // Mostrar loading inicial
+            document.getElementById('loading-overlay').classList.remove('hidden');
+            
+            // Inicializar todos os sistemas
+            DB.init();
+            ThemeSystem.init();
+            NavigationSystem.init();
+            NotificationSystem.init();
+            SearchSystem.init();
+            DashboardSystem.init();
+            ColhedorasManager.init();
+            RegistrosManager.init();
+            FazendasManager.init();
+            LiberacoesManager.init();
+            
+            // Atualizar data/hora
+            Utils.updateDateTime();
+            setInterval(Utils.updateDateTime, 60000);
+            
+            // Configurar eventos globais
+            setupGlobalEvents();
+            
+            // Esconder loading após inicialização
+            setTimeout(() => {
+                document.getElementById('loading-overlay').classList.add('hidden');
+                
+                // Adicionar notificação de boas-vindas
+                DB.notifications.add({
+                    type: 'success',
+                    title: 'Sistema Inicializado',
+                    message: 'GGOMES-LOG v2.0 está pronto para uso!'
+                });
+            }, 2000);
+        });
+        
+        function setupGlobalEvents() {
+            // Prevenir comportamento padrão
+            document.addEventListener('dragstart', e => e.preventDefault());
+            
+            // Eventos de teclado globais
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape') {
+                    NotificationSystem.closePanel();
+                    SearchSystem.closeModal();
+                    
+                    // Fechar modais
+                    document.querySelectorAll('.modal-backdrop').forEach(modal => {
+                        if (!modal.classList.contains('hidden')) {
+                            modal.classList.add('hidden');
+                        }
+                    });
+                }
+                
+                if (e.key === 'F5' && document.getElementById('content-dashboard').classList.contains('content') && 
+                    !document.getElementById('content-dashboard').classList.contains('hidden')) {
+                    e.preventDefault();
+                    DashboardSystem.loadDashboardData();
+                    NotificationSystem.showToast('Dashboard atualizado', 'success', 2000);
+                }
+            });
+            
+            // Configurar botões de exportação
+            document.querySelectorAll('[id^="btn-export"], [class*="btn-exportar"]').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    NotificationSystem.showToast('Funcionalidade de exportação em desenvolvimento', 'info');
+                });
+            });
+            
+            // Configurar botões de filtro
+            document.querySelectorAll('[id*="filtrar"]').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    NotificationSystem.showToast('Funcionalidade de filtros avançados em desenvolvimento', 'info');
+                });
+            });
+            
+            // Configurar botões de tela cheia
+            document.querySelectorAll('[id*="fullscreen"]').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    if (document.fullscreenElement) {
+                        document.exitFullscreen();
+                    } else {
+                        document.documentElement.requestFullscreen();
+                    }
+                });
+            });
+        }
+        
+        // Expor sistemas globalmente para debug
+        window.GGOMES = {
+            DB,
+            NotificationSystem,
+            SearchSystem,
+            NavigationSystem,
+            DashboardSystem,
+            ColhedorasManager,
+            RegistrosManager,
+            FazendasManager,
+            LiberacoesManager,
+            ThemeSystem,
+            Utils
+        };
+    </script>
+</body>
+</html>
