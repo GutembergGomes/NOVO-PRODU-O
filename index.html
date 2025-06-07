@@ -811,7 +811,7 @@
                         </div>
                     </div>
 
-                    <!-- Enhanced Stats Cards - REAL DATA CORRECTED with Average Trucks per Hour -->
+                    <!-- Enhanced Stats Cards -->
                     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6 mb-8">
                         <!-- Total Delivered Card -->
                         <div class="data-card interactive rounded-2xl p-6 shadow-xl">
@@ -848,7 +848,7 @@
                             </div>
                         </div>
 
-                        <!-- Efficiency Card - CORRECTED -->
+                        <!-- Efficiency Card -->
                         <div class="data-card interactive rounded-2xl p-6 shadow-xl">
                             <div class="flex items-center justify-between mb-4">
                                 <div>
@@ -907,7 +907,7 @@
                             </div>
                         </div>
 
-                        <!-- NEW: Average Trucks per Hour Card -->
+                        <!-- Average Trucks per Hour Card -->
                         <div class="data-card interactive rounded-2xl p-6 shadow-xl">
                             <div class="flex items-center justify-between mb-4">
                                 <div>
@@ -1021,7 +1021,7 @@
                         </div>
                     </div>
 
-                    <!-- Enhanced Performance Table - REAL DATA with Trucks per Hour -->
+                    <!-- Enhanced Performance Table -->
                     <div class="glass rounded-2xl shadow-xl overflow-hidden">
                         <div class="p-6 border-b border-gray-200/50 dark:border-gray-700/50">
                             <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-4 sm:space-y-0">
@@ -1156,7 +1156,7 @@
                         </div>
                     </div>
 
-                    <!-- Enhanced Period Selection - 24h Grid -->
+                    <!-- Enhanced Period Selection -->
                     <div class="mb-6">
                         <div class="glass rounded-xl p-4">
                             <div class="flex items-center justify-between mb-4">
@@ -1537,7 +1537,7 @@
 
             async init() {
                 try {
-                    console.log(`🚀 Inicializando GGOMES-LOG v${this.version} - Sistema com Eficiência Corrigida + Média Caminhões/Hora...`);
+                    console.log(`🚀 Inicializando GGOMES-LOG v${this.version} - Sistema com Eficiência Corrigida + Média Caminhões/Hora + Cores Dinâmicas...`);
                     
                     this.showLoadingProgress(10, 'Carregando bibliotecas...');
                     await this.waitForLibraries();
@@ -1555,7 +1555,7 @@
                     this.showLoadingProgress(70, 'Configurando interface...');
                     this.initializeUI();
                     
-                    this.showLoadingProgress(85, 'Criando gráficos...');
+                    this.showLoadingProgress(85, 'Criando gráficos com cores dinâmicas...');
                     await this.initializeCharts();
                     
                     this.showLoadingProgress(90, 'Configurando eventos...');
@@ -1568,7 +1568,7 @@
                     
                     setTimeout(() => {
                         this.hideLoader();
-                        this.showToast(`🎉 GGOMES-LOG v${this.version} carregado - Com Média de Caminhões/Hora!`, 'success');
+                        this.showToast(`🎉 GGOMES-LOG v${this.version} carregado - Com Cores Dinâmicas!`, 'success');
                         this.updateDateDisplay();
                         this.updateAllRealData(); // Update real data immediately
                     }, 800);
@@ -1578,6 +1578,48 @@
                     this.showToast('Erro na inicialização do sistema', 'error');
                     this.hideLoader();
                 }
+            }
+
+            // NEW: Dynamic Color Generator - Fixed the issue with repeating colors
+            generateDynamicColors(count) {
+                const baseColors = [
+                    '#10B981', // Green
+                    '#5D5CDE', // Primary Purple
+                    '#F59E0B', // Orange
+                    '#EF4444', // Red
+                    '#3B82F6', // Blue
+                    '#8B5CF6', // Violet
+                    '#F97316', // Orange-Red
+                    '#06B6D4', // Cyan
+                    '#84CC16', // Lime
+                    '#EC4899', // Pink
+                    '#6366F1', // Indigo
+                    '#14B8A6', // Teal
+                    '#F472B6', // Pink-400
+                    '#A855F7', // Purple-500
+                    '#22C55E', // Green-500
+                    '#EAB308', // Yellow-500
+                    '#DC2626', // Red-600
+                    '#2563EB', // Blue-600
+                ];
+
+                // If we need more colors than base colors, generate additional ones
+                if (count <= baseColors.length) {
+                    return baseColors.slice(0, count);
+                }
+
+                const colors = [...baseColors];
+                const hueStep = 360 / count;
+                
+                // Generate additional colors using HSL
+                for (let i = baseColors.length; i < count; i++) {
+                    const hue = (i * hueStep) % 360;
+                    const saturation = 70 + (i % 3) * 10; // Vary saturation
+                    const lightness = 50 + (i % 2) * 10; // Vary lightness
+                    colors.push(`hsl(${hue}, ${saturation}%, ${lightness}%)`);
+                }
+
+                return colors;
             }
 
             showLoadingProgress(progress, status) {
@@ -1916,7 +1958,7 @@
                 this.updateAllRealData();
                 this.updateActiveEntriesCount();
                 
-                console.log('🎨 Interface inicializada com dados reais + configurações + média caminhões/hora');
+                console.log('🎨 Interface inicializada com dados reais + configurações + média caminhões/hora + cores dinâmicas');
             }
 
             generateTimePeriodButtons() {
@@ -2088,7 +2130,7 @@
                 try {
                     await this.createPerformanceChart();
                     await this.createEfficiencyChart();
-                    console.log('📈 Gráficos criados com sucesso');
+                    console.log('📈 Gráficos criados com sucesso - com cores dinâmicas');
                 } catch (error) {
                     console.error('❌ Erro ao criar gráficos:', error);
                     this.showToast('Erro ao carregar gráficos', 'error');
@@ -2235,6 +2277,7 @@
                 return { delivered, potential };
             }
 
+            // FIXED: Efficiency chart with dynamic colors
             async createEfficiencyChart() {
                 const ctx = document.getElementById('front-efficiency-chart');
                 if (!ctx) return;
@@ -2242,13 +2285,16 @@
                 // Get REAL efficiency data using CORRECTED potential (only hours with data)
                 const realEfficiencyData = this.getRealEfficiencyData();
 
+                // FIXED: Generate dynamic colors based on current number of fronts
+                const dynamicColors = this.generateDynamicColors(this.state.fronts.length);
+
                 this.charts.efficiency = new Chart(ctx, {
                     type: 'doughnut',
                     data: {
                         labels: this.state.fronts.map(front => `F${front}`),
                         datasets: [{
                             data: realEfficiencyData.efficiencies,
-                            backgroundColor: ['#10B981', '#5D5CDE', '#F59E0B', '#EF4444'],
+                            backgroundColor: dynamicColors, // FIXED: Using dynamic colors
                             borderWidth: 4,
                             borderColor: '#fff',
                             hoverBorderWidth: 6,
@@ -2301,6 +2347,8 @@
                         }
                     }
                 });
+
+                console.log('🎨 Gráfico de eficiência criado com cores dinâmicas para', this.state.fronts.length, 'frentes');
             }
 
             // CORRECTED: Get real efficiency data using only hours with actual data
@@ -2338,6 +2386,31 @@
                 return { efficiencies };
             }
 
+            // FIXED: Update chart data with dynamic colors regeneration
+            updateChartData() {
+                // Update performance chart with CORRECTED data
+                if (this.charts.performance) {
+                    const realData = this.getRealPerformanceData();
+                    this.charts.performance.data.datasets[0].data = realData.delivered;
+                    this.charts.performance.data.datasets[1].data = realData.potential;
+                    this.charts.performance.update('none');
+                }
+
+                // FIXED: Update efficiency chart with CORRECTED data and dynamic colors
+                if (this.charts.efficiency) {
+                    const realEfficiencyData = this.getRealEfficiencyData();
+                    const dynamicColors = this.generateDynamicColors(this.state.fronts.length);
+                    
+                    // Update data and colors
+                    this.charts.efficiency.data.labels = this.state.fronts.map(front => `F${front}`);
+                    this.charts.efficiency.data.datasets[0].data = realEfficiencyData.efficiencies;
+                    this.charts.efficiency.data.datasets[0].backgroundColor = dynamicColors; // FIXED: Update colors
+                    this.charts.efficiency.update('none');
+                    
+                    console.log('🎨 Gráfico de eficiência atualizado com cores dinâmicas para', this.state.fronts.length, 'frentes');
+                }
+            }
+
             startPeriodicUpdates() {
                 // Auto-save
                 setInterval(() => {
@@ -2353,7 +2426,7 @@
                     this.updateNotificationCount();
                 }, this.state.config.chartUpdateInterval);
                 
-                console.log('⏰ Atualizações periódicas configuradas para dados reais + configurações + média caminhões/hora');
+                console.log('⏰ Atualizações periódicas configuradas para dados reais + configurações + média caminhões/hora + cores dinâmicas');
             }
 
             // MAIN REAL DATA UPDATE FUNCTION with CORRECTED efficiency calculation + Trucks per Hour
@@ -2364,7 +2437,7 @@
                 this.updateDashboardStats();
                 this.generateDashboardTable();
                 this.updatePeriodSummaries();
-                this.updateChartData();
+                this.updateChartData(); // FIXED: This now includes dynamic color updates
                 this.updateBestWorstPerformers();
                 this.generateFrontConfigCards(); // Update config cards with current data
             }
@@ -2705,23 +2778,6 @@
                 }
             }
 
-            updateChartData() {
-                // Update performance chart with CORRECTED data
-                if (this.charts.performance) {
-                    const realData = this.getRealPerformanceData();
-                    this.charts.performance.data.datasets[0].data = realData.delivered;
-                    this.charts.performance.data.datasets[1].data = realData.potential;
-                    this.charts.performance.update('none');
-                }
-
-                // Update efficiency chart with CORRECTED data
-                if (this.charts.efficiency) {
-                    const realEfficiencyData = this.getRealEfficiencyData();
-                    this.charts.efficiency.data.datasets[0].data = realEfficiencyData.efficiencies;
-                    this.charts.efficiency.update('none');
-                }
-            }
-
             updateNotificationCount() {
                 let notificationCount = 0;
                 
@@ -2765,7 +2821,78 @@
                 this.updateElement('notification-badge', notificationCount.toString());
             }
 
-            // Rest of the methods remain the same but simplified for brevity...
+            // IMPROVED: Add front with proper chart update
+            addFront() {
+                const input = document.getElementById('new-front-input');
+                if (!input) return;
+                
+                const frontNumber = input.value.trim();
+                
+                if (!frontNumber) {
+                    this.showToast('Digite o número da frente', 'warning');
+                    return;
+                }
+                
+                if (!/^\d{4}$/.test(frontNumber)) {
+                    this.showToast('Número da frente deve ter 4 dígitos', 'error');
+                    return;
+                }
+                
+                if (this.state.fronts.includes(frontNumber)) {
+                    this.showToast('Esta frente já existe', 'warning');
+                    return;
+                }
+                
+                // Add front
+                this.state.fronts.push(frontNumber);
+                this.state.fronts.sort();
+                
+                // Initialize data for the new front in ALL periods
+                this.timeSlots.forEach(slot => {
+                    if (!this.state.data.periods[slot.period].fronts[frontNumber]) {
+                        this.state.data.periods[slot.period].fronts[frontNumber] = {
+                            hour1: { density: 0, trips: 0, delivery: 0 },
+                            hour2: { density: 0, trips: 0, delivery: 0 },
+                            total: { density: 0, trips: 0, delivery: 0, efficiency: 0 }
+                        };
+                    }
+                });
+                
+                // Initialize configuration for the new front
+                this.state.data.frontConfigs[frontNumber] = {
+                    dailyGoal: this.state.config.defaultFrontGoal,
+                    defaultPotential: this.state.config.defaultPotentialPerHour,
+                    hourlyPotential: {},
+                    notes: ''
+                };
+                
+                // Initialize hourly potential for all 24 hours
+                this.hours24.forEach(hour => {
+                    this.state.data.frontConfigs[frontNumber].hourlyPotential[hour] = this.state.config.defaultPotentialPerHour;
+                });
+                
+                input.value = '';
+                this.state.ui.unsavedChanges = true;
+                
+                this.showToast(`✅ Frente ${frontNumber} adicionada com configuração padrão e cores dinâmicas`, 'success');
+                this.updateFrontsList();
+                this.generateTimePeriodButtons();
+                this.generateFrontConfigCards();
+                this.updateGlobalGoals();
+                this.updateAllRealData(); // FIXED: This now includes chart updates with dynamic colors
+                this.updateActiveEntriesCount();
+                
+                // Update current period if on entrega-hora page
+                if (this.state.currentPage === 'entrega-hora') {
+                    this.updatePeriodContent();
+                }
+                
+                // Save changes immediately
+                this.saveData();
+                
+                console.log('🎨 Nova frente adicionada com cores dinâmicas - Total de frentes:', this.state.fronts.length);
+            }
+
             // Navigation Methods
             toggleSidebar(force = null) {
                 const sidebar = document.getElementById('sidebar');
@@ -3184,7 +3311,7 @@
                         results.push({
                             type: 'front',
                             title: `Frente ${front}`,
-                            description: 'Dados de produção e configuração com eficiência corrigida + média caminhões/hora',
+                            description: 'Dados de produção e configuração com eficiência corrigida + média caminhões/hora + cores dinâmicas',
                             action: () => {
                                 this.showPage('entrega-hora');
                                 this.hideSearch();
@@ -3239,6 +3366,19 @@
                         type: 'feature',
                         title: 'Média Caminhões por Hora',
                         description: 'Análise de produtividade baseada em caminhões por hora ativa',
+                        action: () => {
+                            this.showPage('dashboard');
+                            this.hideSearch();
+                        }
+                    });
+                }
+
+                // Search for dynamic colors terms
+                if (query.includes('cores') || query.includes('dinâmica') || query.includes('dinamica') || query.includes('gráfico')) {
+                    results.push({
+                        type: 'feature',
+                        title: 'Cores Dinâmicas nos Gráficos',
+                        description: 'Sistema de cores que se adapta automaticamente ao número de frentes',
                         action: () => {
                             this.showPage('dashboard');
                             this.hideSearch();
@@ -3343,75 +3483,6 @@
                 }
             }
 
-            addFront() {
-                const input = document.getElementById('new-front-input');
-                if (!input) return;
-                
-                const frontNumber = input.value.trim();
-                
-                if (!frontNumber) {
-                    this.showToast('Digite o número da frente', 'warning');
-                    return;
-                }
-                
-                if (!/^\d{4}$/.test(frontNumber)) {
-                    this.showToast('Número da frente deve ter 4 dígitos', 'error');
-                    return;
-                }
-                
-                if (this.state.fronts.includes(frontNumber)) {
-                    this.showToast('Esta frente já existe', 'warning');
-                    return;
-                }
-                
-                // Add front
-                this.state.fronts.push(frontNumber);
-                this.state.fronts.sort();
-                
-                // Initialize data for the new front in ALL periods
-                this.timeSlots.forEach(slot => {
-                    if (!this.state.data.periods[slot.period].fronts[frontNumber]) {
-                        this.state.data.periods[slot.period].fronts[frontNumber] = {
-                            hour1: { density: 0, trips: 0, delivery: 0 },
-                            hour2: { density: 0, trips: 0, delivery: 0 },
-                            total: { density: 0, trips: 0, delivery: 0, efficiency: 0 }
-                        };
-                    }
-                });
-                
-                // Initialize configuration for the new front
-                this.state.data.frontConfigs[frontNumber] = {
-                    dailyGoal: this.state.config.defaultFrontGoal,
-                    defaultPotential: this.state.config.defaultPotentialPerHour,
-                    hourlyPotential: {},
-                    notes: ''
-                };
-                
-                // Initialize hourly potential for all 24 hours
-                this.hours24.forEach(hour => {
-                    this.state.data.frontConfigs[frontNumber].hourlyPotential[hour] = this.state.config.defaultPotentialPerHour;
-                });
-                
-                input.value = '';
-                this.state.ui.unsavedChanges = true;
-                
-                this.showToast(`✅ Frente ${frontNumber} adicionada com configuração padrão`, 'success');
-                this.updateFrontsList();
-                this.generateTimePeriodButtons();
-                this.generateFrontConfigCards();
-                this.updateGlobalGoals();
-                this.updateAllRealData();
-                this.updateActiveEntriesCount();
-                
-                // Update current period if on entrega-hora page
-                if (this.state.currentPage === 'entrega-hora') {
-                    this.updatePeriodContent();
-                }
-                
-                // Save changes immediately
-                this.saveData();
-            }
-
             updateFrontsList() {
                 const list = document.getElementById('fronts-list');
                 if (!list) return;
@@ -3469,6 +3540,7 @@
                 });
             }
 
+            // IMPROVED: Remove front with proper chart update
             removeFront(frontNumber) {
                 if (this.state.fronts.length <= 1) {
                     this.showToast('Pelo menos uma frente deve permanecer', 'error');
@@ -3494,9 +3566,9 @@
                     this.generateTimePeriodButtons();
                     this.generateFrontConfigCards();
                     this.updateGlobalGoals();
-                    this.updateAllRealData();
+                    this.updateAllRealData(); // FIXED: This now includes chart updates with dynamic colors
                     this.updateActiveEntriesCount();
-                    this.showToast(`🗑️ Frente ${frontNumber} removida`, 'info');
+                    this.showToast(`🗑️ Frente ${frontNumber} removida - cores atualizadas`, 'info');
                     
                     // Update current period if on entrega-hora page
                     if (this.state.currentPage === 'entrega-hora') {
@@ -3505,11 +3577,13 @@
                     
                     // Save changes immediately
                     this.saveData();
+                    
+                    console.log('🎨 Frente removida com cores dinâmicas atualizadas - Total de frentes:', this.state.fronts.length);
                 }
             }
 
             refreshDashboard() {
-                this.showToast('🔄 Atualizando dashboard com eficiência corrigida + média caminhões/hora...', 'info');
+                this.showToast('🔄 Atualizando dashboard com eficiência corrigida + média caminhões/hora + cores dinâmicas...', 'info');
                 
                 // Show loading state
                 const refreshBtn = document.getElementById('refresh-dashboard');
@@ -3525,8 +3599,8 @@
                         if (icon) icon.classList.remove('animate-spin');
                     }
                     
-                    this.updateAllRealData();
-                    this.showToast('✅ Dashboard atualizado com todas as métricas', 'success');
+                    this.updateAllRealData(); // FIXED: This now includes chart updates with dynamic colors
+                    this.showToast('✅ Dashboard atualizado com todas as métricas e cores dinâmicas', 'success');
                 }, 1500);
             }
 
@@ -3672,7 +3746,8 @@
                     { name: 'Buscar', icon: '🔍', action: () => this.showSearch() },
                     { name: 'Alternar Tema', icon: '🎨', action: () => this.toggleTheme() },
                     { name: 'Eficiência Corrigida', icon: '📈', action: () => this.showToast('Ativo: cálculo só com horas que têm dados', 'info') },
-                    { name: 'Média Caminhões/Hora', icon: '🚛', action: () => this.showToast('Ativo: análise de produtividade por hora', 'info') }
+                    { name: 'Média Caminhões/Hora', icon: '🚛', action: () => this.showToast('Ativo: análise de produtividade por hora', 'info') },
+                    { name: 'Cores Dinâmicas', icon: '🌈', action: () => this.showToast('Ativo: cores que se adaptam ao número de frentes', 'info') }
                 ];
                 
                 const menu = document.createElement('div');
@@ -3893,7 +3968,7 @@
 
                 // Update global goals and refresh all UI
                 this.updateGlobalGoals();
-                this.updateAllRealData();
+                this.updateAllRealData(); // FIXED: This now includes chart updates with dynamic colors
                 this.generateFrontConfigCards();
                 
                 // Save immediately to persist the changes
@@ -4092,7 +4167,7 @@
             // Create global app instance
             window.ggomesApp = new GGomesLogSystem();
             
-            console.log('🚀 GGOMES-LOG v6.9 inicializado - Eficiência Corrigida + Média de Caminhões/Hora');
+            console.log('🚀 GGOMES-LOG v6.9 inicializado - Eficiência Corrigida + Média de Caminhões/Hora + Cores Dinâmicas');
         });
     </script>
 </body>
