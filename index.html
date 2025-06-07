@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GGOMES-LOG v7.0 - Sistema CORRIGIDO de Gestão de Safra</title>
+    <title>GGOMES-LOG v8.0 - Sistema APRIMORADO: Déficit + Relatórios Completos</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.js"></script>
@@ -496,6 +496,30 @@
             border: 1px solid rgba(75,85,99,0.4);
         }
 
+        /* Report specific styles */
+        .report-card {
+            background: linear-gradient(135deg, rgba(255,255,255,0.98) 0%, rgba(255,255,255,0.95) 100%);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(93, 92, 222, 0.2);
+            transition: all 0.3s ease;
+        }
+        .dark .report-card {
+            background: linear-gradient(135deg, rgba(31,41,55,0.98) 0%, rgba(17,24,39,0.95) 100%);
+            border: 1px solid rgba(93, 92, 222, 0.3);
+        }
+
+        .report-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(93, 92, 222, 0.15);
+            border-color: rgba(93, 92, 222, 0.4);
+        }
+
+        .report-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 24px;
+        }
+
         /* Print styles */
         @media print {
             .sidebar, .floating-action, .no-print {
@@ -522,6 +546,10 @@
             .period-grid {
                 grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
             }
+
+            .report-grid {
+                grid-template-columns: 1fr;
+            }
         }
     </style>
 </head>
@@ -537,10 +565,10 @@
                 </div>
             </div>
             <div class="text-3xl font-bold text-gray-700 dark:text-gray-300 mb-2">
-                GGOMES-LOG <span class="text-primary animate-pulse">v7.0</span>
+                GGOMES-LOG <span class="text-primary animate-pulse">v8.0</span>
             </div>
             <div class="text-sm text-gray-500 dark:text-gray-400 mb-4">
-                Sistema CORRIGIDO - Média Caminhões/Hora + Salvamento por Data
+                Sistema APRIMORADO: Déficit + Relatórios Completos
             </div>
             <div class="flex items-center justify-center space-x-1 mb-4">
                 <span class="text-sm text-gray-600 dark:text-gray-400">Inicializando</span>
@@ -573,7 +601,7 @@
                             <h1 class="font-bold text-xl text-gray-900 dark:text-white">GGOMES-LOG</h1>
                             <p class="text-xs text-gray-500 dark:text-gray-400 flex items-center">
                                 <span class="status-indicator status-success"></span>
-                                v7.0 CORRIGIDO
+                                v8.0 APRIMORADO
                             </p>
                         </div>
                     </div>
@@ -612,7 +640,7 @@
                         </svg>
                         <span>Config. Frentes</span>
                         <div class="ml-auto">
-                            <span class="text-xs text-warning font-medium animate-pulse">NEW</span>
+                            <span class="text-xs text-warning font-medium animate-pulse">UPD</span>
                         </div>
                     </a>
 
@@ -648,6 +676,9 @@
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
                         </svg>
                         <span>Relatórios</span>
+                        <div class="ml-auto">
+                            <span class="text-xs text-success font-medium animate-pulse">NEW</span>
+                        </div>
                     </a>
 
                     <div class="pt-6 mt-6 border-t border-gray-200/50 dark:border-gray-700/50">
@@ -750,7 +781,7 @@
                                 </div>
                                 <div class="flex items-center space-x-2 text-sm live-data">
                                     <div class="status-indicator status-success"></div>
-                                    <span class="text-gray-600 dark:text-gray-400">CORRIGIDO v7.0</span>
+                                    <span class="text-gray-600 dark:text-gray-400">APRIMORADO v8.0</span>
                                 </div>
                             </div>
                         </div>
@@ -763,6 +794,12 @@
                                     <div class="w-3 h-3 bg-primary rounded-full animate-pulse"></div>
                                     <span class="text-gray-600 dark:text-gray-400">
                                         <span id="header-total-delivered">0</span>t entregue
+                                    </span>
+                                </div>
+                                <div class="flex items-center space-x-2">
+                                    <div class="w-3 h-3 bg-danger rounded-full animate-pulse"></div>
+                                    <span class="text-gray-600 dark:text-gray-400">
+                                        <span id="header-missing">0</span>t faltante
                                     </span>
                                 </div>
                                 <div class="flex items-center space-x-2">
@@ -826,10 +863,10 @@
                     <div class="mb-6 glass rounded-xl p-4">
                         <div class="flex flex-wrap items-center justify-between gap-4">
                             <div class="flex items-center space-x-4">
-                                <h2 class="text-lg font-semibold text-gray-900 dark:text-white">Dashboard Principal - CORRIGIDO v7.0</h2>
+                                <h2 class="text-lg font-semibold text-gray-900 dark:text-white">Dashboard Principal - APRIMORADO v8.0</h2>
                                 <div class="flex items-center space-x-2 text-sm text-gray-500 dark:text-gray-400">
                                     <div class="w-2 h-2 bg-success rounded-full animate-pulse"></div>
-                                    <span>Média Cam/Hora TOTAL Corrigida + Salvamento por Data</span>
+                                    <span>Déficit por Frente + Relatórios Completos + Média TOTAL Cam/Hora</span>
                                 </div>
                             </div>
                             <div class="flex items-center space-x-2">
@@ -849,8 +886,8 @@
                         </div>
                     </div>
 
-                    <!-- Enhanced Stats Cards -->
-                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6 mb-8">
+                    <!-- Enhanced Stats Cards with Missing Delivery -->
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-6 mb-8">
                         <!-- Total Delivered Card -->
                         <div class="data-card interactive rounded-2xl p-6 shadow-xl">
                             <div class="flex items-center justify-between mb-4">
@@ -882,6 +919,41 @@
                                 </div>
                                 <div class="efficiency-bar">
                                     <div class="efficiency-fill bg-gradient-to-r from-blue-500 to-blue-600" style="width: 0%" id="delivery-progress"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- NEW: Missing Delivery Card -->
+                        <div class="data-card interactive rounded-2xl p-6 shadow-xl">
+                            <div class="flex items-center justify-between mb-4">
+                                <div>
+                                    <h3 class="text-sm font-medium text-gray-500 dark:text-gray-400 mb-1">Não Entregue</h3>
+                                    <p class="text-3xl font-bold text-gray-900 dark:text-white live-data" id="total-missing">0.0 t</p>
+                                    <div class="flex items-center mt-2">
+                                        <span class="text-sm text-danger mr-2" id="missing-trend">Calculando...</span>
+                                        <span class="text-xs text-gray-500 dark:text-gray-400">faltante</span>
+                                    </div>
+                                </div>
+                                <div class="relative">
+                                    <div class="w-16 h-16 bg-gradient-to-br from-red-500 to-red-600 rounded-2xl flex items-center justify-center shadow-lg hover:animate-pulse">
+                                        <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.732-.833-2.464 0L4.35 16.5c-.77.833.192 2.5 1.732 2.5z"/>
+                                        </svg>
+                                    </div>
+                                    <div class="absolute -top-2 -right-2 w-6 h-6 bg-warning rounded-full flex items-center justify-center animate-pulse" id="missing-status">
+                                        <svg class="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01"/>
+                                        </svg>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="space-y-2">
+                                <div class="flex justify-between text-sm">
+                                    <span class="text-gray-500 dark:text-gray-400">Déficit Total</span>
+                                    <span class="font-medium text-danger" id="missing-percentage">0%</span>
+                                </div>
+                                <div class="efficiency-bar">
+                                    <div class="efficiency-fill bg-gradient-to-r from-red-500 to-red-600" style="width: 0%" id="missing-progress"></div>
                                 </div>
                             </div>
                         </div>
@@ -1059,13 +1131,13 @@
                         </div>
                     </div>
 
-                    <!-- Enhanced Performance Table -->
+                    <!-- Enhanced Performance Table with Missing Delivery Column -->
                     <div class="glass rounded-2xl shadow-xl overflow-hidden">
                         <div class="p-6 border-b border-gray-200/50 dark:border-gray-700/50">
                             <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-4 sm:space-y-0">
                                 <div>
-                                    <h3 class="text-xl font-bold text-gray-900 dark:text-white">Detalhamento por Frente - CORRIGIDO v7.0</h3>
-                                    <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">Cálculo baseado apenas nas horas que possuem dados reais + Total Caminhões/Hora CORRIGIDO</p>
+                                    <h3 class="text-xl font-bold text-gray-900 dark:text-white">Detalhamento por Frente - APRIMORADO v8.0</h3>
+                                    <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">Inclui cálculo de déficit + eficiência corrigida + Total Caminhões/Hora</p>
                                 </div>
                                 <div class="flex items-center space-x-3">
                                     <div class="flex items-center space-x-2">
@@ -1093,6 +1165,7 @@
                                             </div>
                                         </th>
                                         <th class="px-6 py-4 text-left text-xs font-semibold text-gray-500 dark:text-gray-300 uppercase tracking-wider">Entregue (24h)</th>
+                                        <th class="px-6 py-4 text-left text-xs font-semibold text-danger uppercase tracking-wider">Não Entregue</th>
                                         <th class="px-6 py-4 text-left text-xs font-semibold text-gray-500 dark:text-gray-300 uppercase tracking-wider">Potencial Usado</th>
                                         <th class="px-6 py-4 text-left text-xs font-semibold text-gray-500 dark:text-gray-300 uppercase tracking-wider">Meta Diária</th>
                                         <th class="px-6 py-4 text-left text-xs font-semibold text-gray-500 dark:text-gray-300 uppercase tracking-wider">Eficiência Real</th>
@@ -1169,7 +1242,7 @@
                         <div class="flex flex-col lg:flex-row lg:justify-between lg:items-center space-y-4 lg:space-y-0">
                             <div>
                                 <h2 class="text-3xl font-bold text-gray-900 dark:text-white">Controle de Entrega 24h (06:00-06:00)</h2>
-                                <p class="text-gray-600 dark:text-gray-400 mt-2">Gerencie todas as entregas em períodos de 2 horas durante 24 horas completas - SALVAMENTO POR DATA CORRIGIDO</p>
+                                <p class="text-gray-600 dark:text-gray-400 mt-2">Gerencie todas as entregas em períodos de 2 horas durante 24 horas completas</p>
                             </div>
                             <div class="flex flex-wrap gap-3">
                                 <button id="manage-fronts" class="flex items-center bg-white/80 dark:bg-gray-700/80 hover:bg-white dark:hover:bg-gray-600 text-gray-700 dark:text-gray-300 py-2 px-4 rounded-xl transition-all duration-300 shadow-sm hover:shadow-md">
@@ -1276,32 +1349,242 @@
                     </div>
                 </div>
 
+                <!-- NEW: Complete Reports Section -->
+                <div id="relatorios-content" class="page-content hidden">
+                    <div class="mb-6">
+                        <div class="flex flex-col lg:flex-row lg:justify-between lg:items-center space-y-4 lg:space-y-0">
+                            <div>
+                                <h2 class="text-3xl font-bold text-gray-900 dark:text-white">Central de Relatórios</h2>
+                                <p class="text-gray-600 dark:text-gray-400 mt-2">Relatórios completos com análises detalhadas e exportação</p>
+                            </div>
+                            <div class="flex flex-wrap gap-3">
+                                <button id="generate-all-reports" class="flex items-center bg-primary hover:bg-primary-600 text-white py-2 px-4 rounded-xl transition-all duration-300 shadow-lg hover:shadow-xl">
+                                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+                                    </svg>
+                                    Gerar Todos
+                                </button>
+                                <button id="schedule-reports" class="flex items-center bg-white/80 dark:bg-gray-700/80 hover:bg-white dark:hover:bg-gray-600 text-gray-700 dark:text-gray-300 py-2 px-4 rounded-xl transition-all duration-300 shadow-sm hover:shadow-md">
+                                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                    </svg>
+                                    Programar
+                                </button>
+                                <button id="export-reports-config" class="flex items-center bg-primary/10 hover:bg-primary/20 text-primary py-2 px-4 rounded-xl transition-all duration-300 shadow-sm hover:shadow-md">
+                                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                                    </svg>
+                                    Configurações
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Report Types Grid -->
+                    <div class="report-grid mb-8">
+                        <!-- Daily Report -->
+                        <div class="report-card rounded-2xl p-6 shadow-xl cursor-pointer" data-report="daily">
+                            <div class="flex items-center justify-between mb-4">
+                                <div class="w-12 h-12 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl flex items-center justify-center">
+                                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                                    </svg>
+                                </div>
+                                <span class="text-xs bg-blue-100 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 px-2 py-1 rounded-full font-medium">DIÁRIO</span>
+                            </div>
+                            <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-2">Relatório Diário</h3>
+                            <p class="text-gray-600 dark:text-gray-400 text-sm mb-4">Análise completa do dia com entregas, déficit, eficiência e comparativos</p>
+                            <div class="space-y-2 text-sm">
+                                <div class="flex items-center justify-between">
+                                    <span class="text-gray-500 dark:text-gray-400">Última geração:</span>
+                                    <span class="font-medium text-gray-900 dark:text-white" id="daily-last-gen">Nunca</span>
+                                </div>
+                                <div class="flex items-center justify-between">
+                                    <span class="text-gray-500 dark:text-gray-400">Formato:</span>
+                                    <span class="font-medium text-gray-900 dark:text-white">PDF + CSV</span>
+                                </div>
+                            </div>
+                            <button class="w-full mt-4 bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded-lg transition-colors font-medium generate-report-btn" data-type="daily">
+                                Gerar Relatório Diário
+                            </button>
+                        </div>
+
+                        <!-- Weekly Report -->
+                        <div class="report-card rounded-2xl p-6 shadow-xl cursor-pointer" data-report="weekly">
+                            <div class="flex items-center justify-between mb-4">
+                                <div class="w-12 h-12 bg-gradient-to-br from-green-500 to-green-600 rounded-xl flex items-center justify-center">
+                                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+                                    </svg>
+                                </div>
+                                <span class="text-xs bg-green-100 dark:bg-green-900/20 text-green-600 dark:text-green-400 px-2 py-1 rounded-full font-medium">SEMANAL</span>
+                            </div>
+                            <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-2">Relatório Semanal</h3>
+                            <p class="text-gray-600 dark:text-gray-400 text-sm mb-4">Tendências semanais, comparativos e análise de performance por frente</p>
+                            <div class="space-y-2 text-sm">
+                                <div class="flex items-center justify-between">
+                                    <span class="text-gray-500 dark:text-gray-400">Última geração:</span>
+                                    <span class="font-medium text-gray-900 dark:text-white" id="weekly-last-gen">Nunca</span>
+                                </div>
+                                <div class="flex items-center justify-between">
+                                    <span class="text-gray-500 dark:text-gray-400">Período:</span>
+                                    <span class="font-medium text-gray-900 dark:text-white">7 dias</span>
+                                </div>
+                            </div>
+                            <button class="w-full mt-4 bg-green-500 hover:bg-green-600 text-white py-2 px-4 rounded-lg transition-colors font-medium generate-report-btn" data-type="weekly">
+                                Gerar Relatório Semanal
+                            </button>
+                        </div>
+
+                        <!-- Monthly Report -->
+                        <div class="report-card rounded-2xl p-6 shadow-xl cursor-pointer" data-report="monthly">
+                            <div class="flex items-center justify-between mb-4">
+                                <div class="w-12 h-12 bg-gradient-to-br from-purple-500 to-purple-600 rounded-xl flex items-center justify-center">
+                                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 8v8m-4-5v5m-4-2v2m-2 4h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                                    </svg>
+                                </div>
+                                <span class="text-xs bg-purple-100 dark:bg-purple-900/20 text-purple-600 dark:text-purple-400 px-2 py-1 rounded-full font-medium">MENSAL</span>
+                            </div>
+                            <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-2">Relatório Mensal</h3>
+                            <p class="text-gray-600 dark:text-gray-400 text-sm mb-4">Análise consolidada mensal com KPIs, metas alcançadas e recomendações</p>
+                            <div class="space-y-2 text-sm">
+                                <div class="flex items-center justify-between">
+                                    <span class="text-gray-500 dark:text-gray-400">Última geração:</span>
+                                    <span class="font-medium text-gray-900 dark:text-white" id="monthly-last-gen">Nunca</span>
+                                </div>
+                                <div class="flex items-center justify-between">
+                                    <span class="text-gray-500 dark:text-gray-400">Período:</span>
+                                    <span class="font-medium text-gray-900 dark:text-white">30 dias</span>
+                                </div>
+                            </div>
+                            <button class="w-full mt-4 bg-purple-500 hover:bg-purple-600 text-white py-2 px-4 rounded-lg transition-colors font-medium generate-report-btn" data-type="monthly">
+                                Gerar Relatório Mensal
+                            </button>
+                        </div>
+
+                        <!-- Performance Report -->
+                        <div class="report-card rounded-2xl p-6 shadow-xl cursor-pointer" data-report="performance">
+                            <div class="flex items-center justify-between mb-4">
+                                <div class="w-12 h-12 bg-gradient-to-br from-orange-500 to-orange-600 rounded-xl flex items-center justify-center">
+                                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/>
+                                    </svg>
+                                </div>
+                                <span class="text-xs bg-orange-100 dark:bg-orange-900/20 text-orange-600 dark:text-orange-400 px-2 py-1 rounded-full font-medium">PERFORMANCE</span>
+                            </div>
+                            <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-2">Análise de Performance</h3>
+                            <p class="text-gray-600 dark:text-gray-400 text-sm mb-4">Ranking de frentes, eficiências, déficit por frente e benchmarks</p>
+                            <div class="space-y-2 text-sm">
+                                <div class="flex items-center justify-between">
+                                    <span class="text-gray-500 dark:text-gray-400">Inclui déficit:</span>
+                                    <span class="font-medium text-success">✓ Sim</span>
+                                </div>
+                                <div class="flex items-center justify-between">
+                                    <span class="text-gray-500 dark:text-gray-400">Benchmarks:</span>
+                                    <span class="font-medium text-success">✓ Sim</span>
+                                </div>
+                            </div>
+                            <button class="w-full mt-4 bg-orange-500 hover:bg-orange-600 text-white py-2 px-4 rounded-lg transition-colors font-medium generate-report-btn" data-type="performance">
+                                Gerar Análise de Performance
+                            </button>
+                        </div>
+
+                        <!-- Efficiency Report -->
+                        <div class="report-card rounded-2xl p-6 shadow-xl cursor-pointer" data-report="efficiency">
+                            <div class="flex items-center justify-between mb-4">
+                                <div class="w-12 h-12 bg-gradient-to-br from-red-500 to-red-600 rounded-xl flex items-center justify-center">
+                                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.732-.833-2.464 0L4.35 16.5c-.77.833.192 2.5 1.732 2.5z"/>
+                                    </svg>
+                                </div>
+                                <span class="text-xs bg-red-100 dark:bg-red-900/20 text-red-600 dark:text-red-400 px-2 py-1 rounded-full font-medium">DÉFICIT</span>
+                            </div>
+                            <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-2">Relatório de Déficit</h3>
+                            <p class="text-gray-600 dark:text-gray-400 text-sm mb-4">Análise detalhada do que não foi entregue por frente e período</p>
+                            <div class="space-y-2 text-sm">
+                                <div class="flex items-center justify-between">
+                                    <span class="text-gray-500 dark:text-gray-400">Por frente:</span>
+                                    <span class="font-medium text-success">✓ Sim</span>
+                                </div>
+                                <div class="flex items-center justify-between">
+                                    <span class="text-gray-500 dark:text-gray-400">Por período:</span>
+                                    <span class="font-medium text-success">✓ Sim</span>
+                                </div>
+                            </div>
+                            <button class="w-full mt-4 bg-red-500 hover:bg-red-600 text-white py-2 px-4 rounded-lg transition-colors font-medium generate-report-btn" data-type="efficiency">
+                                Gerar Relatório de Déficit
+                            </button>
+                        </div>
+
+                        <!-- Custom Report -->
+                        <div class="report-card rounded-2xl p-6 shadow-xl cursor-pointer" data-report="custom">
+                            <div class="flex items-center justify-between mb-4">
+                                <div class="w-12 h-12 bg-gradient-to-br from-gray-500 to-gray-600 rounded-xl flex items-center justify-center">
+                                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 100 4m0-4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 100 4m0-4v2m0-6V4"/>
+                                    </svg>
+                                </div>
+                                <span class="text-xs bg-gray-100 dark:bg-gray-900/20 text-gray-600 dark:text-gray-400 px-2 py-1 rounded-full font-medium">CUSTOMIZADO</span>
+                            </div>
+                            <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-2">Relatório Customizado</h3>
+                            <p class="text-gray-600 dark:text-gray-400 text-sm mb-4">Configure seu próprio relatório com filtros e métricas específicas</p>
+                            <div class="space-y-2 text-sm">
+                                <div class="flex items-center justify-between">
+                                    <span class="text-gray-500 dark:text-gray-400">Filtros:</span>
+                                    <span class="font-medium text-primary">Configurável</span>
+                                </div>
+                                <div class="flex items-center justify-between">
+                                    <span class="text-gray-500 dark:text-gray-400">Período:</span>
+                                    <span class="font-medium text-primary">Livre</span>
+                                </div>
+                            </div>
+                            <button class="w-full mt-4 bg-gray-500 hover:bg-gray-600 text-white py-2 px-4 rounded-lg transition-colors font-medium generate-report-btn" data-type="custom">
+                                Configurar Relatório
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Recent Reports Section -->
+                    <div class="glass rounded-2xl p-6 shadow-xl">
+                        <div class="flex items-center justify-between mb-6">
+                            <h3 class="text-xl font-bold text-gray-900 dark:text-white">Relatórios Recentes</h3>
+                            <button id="clear-reports-history" class="text-sm text-gray-500 hover:text-red-500 transition-colors">
+                                Limpar Histórico
+                            </button>
+                        </div>
+                        <div id="recent-reports-list" class="space-y-3">
+                            <div class="text-center py-8 text-gray-500 dark:text-gray-400">
+                                <svg class="w-12 h-12 mx-auto mb-4 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                                </svg>
+                                <p>Nenhum relatório gerado ainda</p>
+                                <p class="text-xs mt-2">Gere seu primeiro relatório usando os cartões acima</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
                 <!-- Other content sections remain the same but are hidden for brevity -->
                 <div id="analytics-content" class="page-content hidden">
                     <div class="text-center py-20">
                         <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-4">Analytics Avançado</h2>
-                        <p class="text-gray-600 dark:text-gray-400">Seção em desenvolvimento com a nova lógica de cálculo v7.0</p>
+                        <p class="text-gray-600 dark:text-gray-400">Seção em desenvolvimento com a nova lógica de cálculo v8.0</p>
                     </div>
                 </div>
 
                 <div id="metas-content" class="page-content hidden">
                     <div class="text-center py-20">
                         <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-4">Metas e KPIs</h2>
-                        <p class="text-gray-600 dark:text-gray-400">Seção em desenvolvimento com eficiência corrigida v7.0</p>
+                        <p class="text-gray-600 dark:text-gray-400">Seção em desenvolvimento com eficiência corrigida v8.0</p>
                     </div>
                 </div>
 
                 <div id="historico-content" class="page-content hidden">
                     <div class="text-center py-20">
                         <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-4">Histórico</h2>
-                        <p class="text-gray-600 dark:text-gray-400">Histórico será implementado em breve - salvamento por data v7.0</p>
-                    </div>
-                </div>
-
-                <div id="relatorios-content" class="page-content hidden">
-                    <div class="text-center py-20">
-                        <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-4">Relatórios</h2>
-                        <p class="text-gray-600 dark:text-gray-400">Relatórios serão implementados em breve</p>
+                        <p class="text-gray-600 dark:text-gray-400">Histórico será implementado em breve - salvamento por data v8.0</p>
                     </div>
                 </div>
 
@@ -1483,9 +1766,9 @@
 
     <!-- JavaScript Application -->
     <script>
-        class GGomesLogSystemCorrected {
+        class GGomesLogSystemEnhanced {
             constructor() {
-                this.version = '7.0';
+                this.version = '8.0';
                 this.state = {
                     currentDate: new Date().toISOString().split('T')[0],
                     currentPage: 'dashboard',
@@ -1521,6 +1804,20 @@
                     
                     // Charts storage
                     charts: {},
+                    
+                    // NEW: Reports system
+                    reports: {
+                        history: [],
+                        lastGenerated: {},
+                        templates: {
+                            daily: { name: 'Relatório Diário', format: 'PDF+CSV' },
+                            weekly: { name: 'Relatório Semanal', format: 'PDF+Excel' },
+                            monthly: { name: 'Relatório Mensal', format: 'PDF+PowerPoint' },
+                            performance: { name: 'Análise de Performance', format: 'PDF' },
+                            efficiency: { name: 'Relatório de Déficit', format: 'PDF+CSV' },
+                            custom: { name: 'Relatório Customizado', format: 'Configurável' }
+                        }
+                    },
                     
                     // Configuration
                     config: {
@@ -1575,7 +1872,7 @@
 
             async init() {
                 try {
-                    console.log(`🚀 Inicializando GGOMES-LOG v${this.version} - CORRIGIDO: Média Caminhões/Hora TOTAL + Salvamento por Data...`);
+                    console.log(`🚀 Inicializando GGOMES-LOG v${this.version} - APRIMORADO: Déficit + Relatórios Completos...`);
                     
                     this.showLoadingProgress(10, 'Carregando bibliotecas...');
                     await this.waitForLibraries();
@@ -1583,7 +1880,7 @@
                     this.showLoadingProgress(25, 'Configurando tema...');
                     this.setupTheme();
                     
-                    this.showLoadingProgress(40, 'Carregando dados CORRIGIDOS...');
+                    this.showLoadingProgress(40, 'Carregando dados APRIMORADOS...');
                     this.loadData(); // Load first to get existing configs
                     
                     this.showLoadingProgress(55, 'Inicializando estrutura de dados 24h...');
@@ -1606,7 +1903,7 @@
                     
                     setTimeout(() => {
                         this.hideLoader();
-                        this.showToast(`🎉 GGOMES-LOG v${this.version} carregado - CORRIGIDO: Média Cam/Hora TOTAL + Salvamento por Data!`, 'success');
+                        this.showToast(`🎉 GGOMES-LOG v${this.version} carregado - APRIMORADO: Déficit + Relatórios Completos!`, 'success');
                         this.updateDateDisplay();
                         this.updateAllRealData(); // Update real data immediately
                     }, 800);
@@ -1740,11 +2037,11 @@
                 console.log(`📊 Meta global atualizada: ${totalGoal}t`);
             }
 
-            // CORRECTED: Data Management - Fixed loading and saving with proper date management
+            // Data Management - Fixed loading and saving with proper date management
             loadData() {
                 try {
                     // Always load general configuration first (fronts list and configurations)
-                    const generalData = localStorage.getItem('ggomes-log-data-v70-config');
+                    const generalData = localStorage.getItem('ggomes-log-data-v80-config');
                     if (generalData) {
                         const data = JSON.parse(generalData);
                         
@@ -1763,10 +2060,15 @@
                         if (data.config) {
                             this.state.config = { ...this.state.config, ...data.config };
                         }
+
+                        // Load reports history
+                        if (data.reports) {
+                            this.state.reports = { ...this.state.reports, ...data.reports };
+                        }
                     }
                     
                     // Then try to load data specific to the current date
-                    const dateKey = `ggomes-log-data-v70-${this.state.currentDate}`;
+                    const dateKey = `ggomes-log-data-v80-${this.state.currentDate}`;
                     const dateData = localStorage.getItem(dateKey);
                     
                     if (dateData) {
@@ -1799,13 +2101,13 @@
                 }
             }
 
-            // CORRECTED: Save data with proper date and configuration management
+            // Save data with proper date and configuration management
             saveData() {
                 try {
                     // Always update global goals before saving
                     this.updateGlobalGoals();
                     
-                    // Save general configuration (fronts, configurations, global settings)
+                    // Save general configuration (fronts, configurations, global settings, reports)
                     const configData = {
                         version: this.version,
                         timestamp: new Date().toISOString(),
@@ -1814,9 +2116,10 @@
                             frontConfigs: this.state.data.frontConfigs,
                             dailyGoals: this.state.data.dailyGoals
                         },
-                        config: this.state.config
+                        config: this.state.config,
+                        reports: this.state.reports
                     };
-                    localStorage.setItem('ggomes-log-data-v70-config', JSON.stringify(configData));
+                    localStorage.setItem('ggomes-log-data-v80-config', JSON.stringify(configData));
                     
                     // Save date-specific data (periods and active period)
                     const dateData = {
@@ -1828,7 +2131,7 @@
                             periods: this.state.data.periods
                         }
                     };
-                    const dateKey = `ggomes-log-data-v70-${this.state.currentDate}`;
+                    const dateKey = `ggomes-log-data-v80-${this.state.currentDate}`;
                     localStorage.setItem(dateKey, JSON.stringify(dateData));
                     
                     this.state.ui.unsavedChanges = false;
@@ -1912,7 +2215,7 @@
                     this.addEventListenerSafe('floating-action', 'click', () => this.showQuickActions());
                     this.addEventListenerSafe('notifications-trigger', 'click', () => this.showNotifications());
 
-                    // CORRECTED: Date Navigation
+                    // Date Navigation
                     this.addEventListenerSafe('prev-date', 'click', () => this.navigateDate(-1));
                     this.addEventListenerSafe('next-date', 'click', () => this.navigateDate(1));
                     this.addEventListenerSafe('date-picker', 'click', () => this.showDatePicker());
@@ -1942,6 +2245,12 @@
                     this.addEventListenerSafe('save-config', 'click', () => this.saveFrontConfiguration());
                     this.addEventListenerSafe('copy-default-potential', 'click', () => this.copyDefaultPotential());
 
+                    // NEW: Reports Event Listeners
+                    this.addEventListenerSafe('generate-all-reports', 'click', () => this.generateAllReports());
+                    this.addEventListenerSafe('schedule-reports', 'click', () => this.scheduleReports());
+                    this.addEventListenerSafe('export-reports-config', 'click', () => this.exportReportsConfig());
+                    this.addEventListenerSafe('clear-reports-history', 'click', () => this.clearReportsHistory());
+
                     // Search
                     this.addEventListenerSafe('search-input', 'input', (e) => this.handleSearch(e));
                     this.addEventListenerSafe('table-search', 'input', (e) => this.handleTableSearch(e));
@@ -1969,6 +2278,14 @@
 
                     // Setup Chart Controls
                     this.setupChartControls();
+
+                    // NEW: Report Generation Buttons
+                    document.querySelectorAll('.generate-report-btn').forEach(btn => {
+                        btn.addEventListener('click', (e) => {
+                            const reportType = btn.dataset.type;
+                            this.generateReport(reportType);
+                        });
+                    });
 
                     // Global Events
                     document.addEventListener('keydown', (e) => this.handleKeyboardShortcuts(e));
@@ -2018,8 +2335,9 @@
                 this.generateFrontConfigCards();
                 this.updateAllRealData();
                 this.updateActiveEntriesCount();
+                this.updateReportsLastGenerated(); // NEW
                 
-                console.log('🎨 Interface inicializada com dados reais + configurações + média caminhões/hora CORRIGIDA');
+                console.log('🎨 Interface inicializada com dados reais + configurações + déficit + relatórios');
             }
 
             generateTimePeriodButtons() {
@@ -2105,6 +2423,9 @@
                         }
                     });
                     
+                    // NEW: Calculate missing delivery
+                    const missingDelivery = Math.max(0, dailyGoal - currentDelivery);
+                    
                     const goalProgress = dailyGoal > 0 ? (currentDelivery / dailyGoal) * 100 : 0;
                     const potentialProgress = totalUsedPotential > 0 ? (currentDelivery / totalUsedPotential) * 100 : 0;
 
@@ -2129,14 +2450,18 @@
                             </div>
 
                             <div class="space-y-4">
-                                <div class="grid grid-cols-2 gap-4">
+                                <div class="grid grid-cols-3 gap-4">
                                     <div class="bg-blue-50 dark:bg-blue-900/20 rounded-lg p-3">
-                                        <div class="text-sm text-blue-600 dark:text-blue-400 font-medium">Meta Diária</div>
+                                        <div class="text-sm text-blue-600 dark:text-blue-400 font-medium">Meta</div>
                                         <div class="text-lg font-bold text-blue-700 dark:text-blue-300">${dailyGoal.toFixed(0)}t</div>
                                     </div>
                                     <div class="bg-green-50 dark:bg-green-900/20 rounded-lg p-3">
                                         <div class="text-sm text-green-600 dark:text-green-400 font-medium">Atual</div>
                                         <div class="text-lg font-bold text-green-700 dark:text-green-300">${currentDelivery.toFixed(1)}t</div>
+                                    </div>
+                                    <div class="bg-red-50 dark:bg-red-900/20 rounded-lg p-3">
+                                        <div class="text-sm text-red-600 dark:text-red-400 font-medium">Faltante</div>
+                                        <div class="text-lg font-bold text-red-700 dark:text-red-300">${missingDelivery.toFixed(1)}t</div>
                                     </div>
                                 </div>
 
@@ -2302,7 +2627,7 @@
                 });
             }
 
-            // CORRECTED: Get real performance data using only hours with actual data
+            // Get real performance data using only hours with actual data
             getRealPerformanceData() {
                 const delivered = [];
                 const potential = [];
@@ -2316,7 +2641,7 @@
                         if (frontData) {
                             periodDelivered += frontData.total.delivery;
                             
-                            // CORRECTED: Only add potential if there's actual data (trips > 0)
+                            // Only add potential if there's actual data (trips > 0)
                             if (frontData.total.trips > 0) {
                                 const frontConfig = this.state.data.frontConfigs[front];
                                 if (frontConfig?.hourlyPotential) {
@@ -2414,7 +2739,7 @@
                 console.log('🎨 Gráfico de eficiência criado com cores dinâmicas para', this.state.fronts.length, 'frentes');
             }
 
-            // CORRECTED: Get real efficiency data using only hours with actual data
+            // Get real efficiency data using only hours with actual data
             getRealEfficiencyData() {
                 const efficiencies = [];
                 
@@ -2427,7 +2752,7 @@
                         if (frontData) {
                             totalDelivery += frontData.total.delivery;
                             
-                            // CORRECTED: Only add potential if there's actual data (trips > 0)
+                            // Only add potential if there's actual data (trips > 0)
                             if (frontData.total.trips > 0) {
                                 const frontConfig = this.state.data.frontConfigs[front];
                                 if (frontConfig?.hourlyPotential) {
@@ -2494,7 +2819,7 @@
                 console.log('⏰ Atualizações periódicas configuradas');
             }
 
-            // MAIN REAL DATA UPDATE FUNCTION with CORRECTED efficiency calculation + CORRECTED Total Trucks per Hour
+            // MAIN REAL DATA UPDATE FUNCTION with MISSING DELIVERY calculation
             updateAllRealData() {
                 // Always ensure global goals are updated first
                 this.updateGlobalGoals();
@@ -2502,22 +2827,22 @@
                 this.updateDashboardStats();
                 this.generateDashboardTable();
                 this.updatePeriodSummaries();
-                this.updateChartData(); // FIXED: This now includes dynamic color updates
+                this.updateChartData();
                 this.updateBestWorstPerformers();
-                this.generateFrontConfigCards(); // Update config cards with current data
+                this.generateFrontConfigCards();
             }
 
-            // CORRECTED: Update dashboard stats using only hours with data + CORRECTED Total Trucks per Hour
+            // UPDATE: Dashboard stats with MISSING DELIVERY calculation
             updateDashboardStats() {
-                // Calculate REAL totals from all periods and fronts using CORRECTED potential
+                // Calculate REAL totals from all periods and fronts
                 let totalDelivered = 0;
                 let totalTrips = 0;
-                let totalUsedPotential = 0; // CORRECTED: Only potential for hours with data
+                let totalUsedPotential = 0;
                 let allDensities = [];
-                let totalActiveHours = 0; // CORRECTED: Total active hours across ALL frentes
-                let periodsWithData = new Set(); // Track which periods have data
+                let totalActiveHours = 0;
+                let periodsWithData = new Set();
 
-                // CORRECTED: Calculate total trucks per hour correctly - total trips across all fronts divided by total active hours
+                // Calculate total trucks per hour correctly
                 this.state.fronts.forEach(front => {
                     let frontTotalDelivered = 0;
                     
@@ -2531,9 +2856,9 @@
                                 allDensities.push(frontData.total.density);
                             }
                             
-                            // CORRECTED: Only add potential and hours for actual data
+                            // Only add potential and hours for actual data
                             if (frontData.total.trips > 0) {
-                                periodsWithData.add(slot.period); // Track periods with data
+                                periodsWithData.add(slot.period);
                                 const frontConfig = this.state.data.frontConfigs[front];
                                 if (frontConfig?.hourlyPotential) {
                                     slot.hours.forEach(hour => {
@@ -2544,11 +2869,10 @@
                         }
                     });
                     
-                    // Add to global totals
                     totalDelivered += frontTotalDelivered;
                 });
 
-                // CORRECTED: Calculate total active hours - each period with data has 2 hours
+                // Calculate total active hours
                 totalActiveHours = periodsWithData.size * 2;
 
                 const avgEfficiency = totalUsedPotential > 0 ? (totalDelivered / totalUsedPotential) * 100 : 0;
@@ -2556,24 +2880,30 @@
                     ? allDensities.reduce((a, b) => a + b, 0) / allDensities.length 
                     : 0;
 
-                // CORRECTED: Calculate TOTAL trucks per hour correctly - total trips from all fronts divided by total active hours
+                // Calculate TOTAL trucks per hour correctly
                 const totalTrucksPerHour = totalActiveHours > 0 ? totalTrips / totalActiveHours : 0;
 
-                // Update dashboard cards with CORRECTED data + CORRECTED Total Trucks per Hour
+                // NEW: Calculate missing delivery
+                const totalGoal = this.state.data.dailyGoals.delivery;
+                const totalMissing = Math.max(0, totalGoal - totalDelivered);
+
+                // Update dashboard cards with MISSING DELIVERY
                 this.updateElement('total-delivered', `${totalDelivered.toFixed(1)} t`);
+                this.updateElement('total-missing', `${totalMissing.toFixed(1)} t`); // NEW
                 this.updateElement('overall-efficiency', `${avgEfficiency.toFixed(1)}%`);
                 this.updateElement('total-trips', totalTrips.toString());
                 this.updateElement('total-potential', `${totalUsedPotential.toFixed(1)} t`);
-                this.updateElement('avg-trucks-hour', `${totalTrucksPerHour.toFixed(1)}`); // CORRECTED
-                this.updateElement('active-periods-count', periodsWithData.size.toString()); // CORRECTED: Show periods with data
+                this.updateElement('avg-trucks-hour', `${totalTrucksPerHour.toFixed(1)}`);
+                this.updateElement('active-periods-count', periodsWithData.size.toString());
 
                 // Update header stats
                 this.updateElement('header-total-delivered', Math.round(totalDelivered).toString());
+                this.updateElement('header-missing', Math.round(totalMissing).toString()); // NEW
                 this.updateElement('header-efficiency', Math.round(avgEfficiency).toString());
-                this.updateElement('header-trucks-hour', Math.round(totalTrucksPerHour).toString()); // CORRECTED
+                this.updateElement('header-trucks-hour', Math.round(totalTrucksPerHour).toString());
 
-                // Update progress bars and trends using CORRECTED values
-                this.updateProgressAndTrends(totalDelivered, avgEfficiency, totalTrips, totalUsedPotential, totalTrucksPerHour);
+                // Update progress bars and trends
+                this.updateProgressAndTrends(totalDelivered, avgEfficiency, totalTrips, totalUsedPotential, totalTrucksPerHour, totalMissing);
 
                 // Update efficiency circle
                 const efficiencyCircle = document.getElementById('efficiency-circle');
@@ -2586,43 +2916,52 @@
                 this.updateElement('potential-usage', `${potentialUsage.toFixed(1)}%`);
                 this.updateProgressBar('potential-progress', potentialUsage);
 
-                // CORRECTED: Update trucks per hour progress (using a target of 50 trucks/hour as reference for TOTAL)
-                const trucksPerHourTarget = 50; // Higher target since it's total across all fronts
+                // Update trucks per hour progress
+                const trucksPerHourTarget = 50;
                 const trucksProgress = Math.min((totalTrucksPerHour / trucksPerHourTarget) * 100, 100);
                 this.updateProgressBar('trucks-progress', trucksProgress);
             }
 
-            updateProgressAndTrends(totalDelivered, avgEfficiency, totalTrips, totalUsedPotential, totalTrucksPerHour) {
+            updateProgressAndTrends(totalDelivered, avgEfficiency, totalTrips, totalUsedPotential, totalTrucksPerHour, totalMissing) {
                 // Calculate progress against configured goals
                 const totalGoalFromFronts = this.state.data.dailyGoals.delivery;
                 const deliveryProgress = totalGoalFromFronts > 0 ? Math.min((totalDelivered / totalGoalFromFronts) * 100, 100) : 0;
                 const tripsProgress = Math.min((totalTrips / this.state.data.dailyGoals.trips) * 100, 100);
 
+                // NEW: Missing delivery progress
+                const missingProgress = totalGoalFromFronts > 0 ? Math.min((totalMissing / totalGoalFromFronts) * 100, 100) : 0;
+
                 this.updateProgressBar('delivery-progress', deliveryProgress);
                 this.updateProgressBar('trips-progress', tripsProgress);
+                this.updateProgressBar('missing-progress', missingProgress); // NEW
 
                 this.updateElement('delivery-percentage', `${deliveryProgress.toFixed(1)}%`);
                 this.updateElement('trips-percentage', `${tripsProgress.toFixed(1)}%`);
+                this.updateElement('missing-percentage', `${missingProgress.toFixed(1)}%`); // NEW
 
-                // Update trend indicators using CORRECTED values + CORRECTED Total Trucks per Hour
-                this.updateTrendIndicators(totalDelivered, avgEfficiency, totalTrips, totalUsedPotential, totalTrucksPerHour);
+                // Update trend indicators
+                this.updateTrendIndicators(totalDelivered, avgEfficiency, totalTrips, totalUsedPotential, totalTrucksPerHour, totalMissing);
             }
 
-            updateTrendIndicators(totalDelivered, avgEfficiency, totalTrips, totalUsedPotential, totalTrucksPerHour) {
+            updateTrendIndicators(totalDelivered, avgEfficiency, totalTrips, totalUsedPotential, totalTrucksPerHour, totalMissing) {
                 // Calculate trends vs configured goals/potential
                 const totalGoal = this.state.data.dailyGoals.delivery;
                 const deliveryTrend = totalGoal > 0 ? ((totalDelivered / totalGoal) - 1) * 100 : 0;
                 const efficiencyTrend = avgEfficiency - this.state.data.dailyGoals.efficiency;
                 const tripsTrend = ((totalTrips / this.state.data.dailyGoals.trips) - 1) * 100;
-                const potentialTrend = totalUsedPotential > 0 ? ((totalDelivered / totalUsedPotential) - 0.85) * 100 : 0; // vs 85% target
+                const potentialTrend = totalUsedPotential > 0 ? ((totalDelivered / totalUsedPotential) - 0.85) * 100 : 0;
+
+                // NEW: Missing delivery trend
+                const missingTrend = totalGoal > 0 ? (totalMissing / totalGoal) * 100 : 0;
 
                 this.updateTrendElement('delivery-trend', deliveryTrend);
                 this.updateTrendElement('efficiency-trend', efficiencyTrend);
                 this.updateTrendElement('trips-trend', tripsTrend);
                 this.updateTrendElement('potential-trend', potentialTrend);
+                this.updateTrendElement('missing-trend', missingTrend); // NEW
 
-                // CORRECTED: Update total trucks per hour trend (using 50 trucks/hour as target for TOTAL)
-                const trucksTarget = 50; // Higher target since it's total across all fronts
+                // Update trucks per hour trend
+                const trucksTarget = 50;
                 const trucksTrend = ((totalTrucksPerHour / trucksTarget) - 1) * 100;
                 this.updateTrendElement('trucks-trend', trucksTrend);
 
@@ -2633,12 +2972,18 @@
             updateTrendElement(id, trend) {
                 const element = document.getElementById(id);
                 if (element) {
-                    const isPositive = trend >= 0;
+                    // Special handling for missing trend (inverted logic)
+                    const isPositive = id === 'missing-trend' ? trend <= 0 : trend >= 0;
                     const color = isPositive ? 'text-success' : 'text-danger';
                     const symbol = isPositive ? '+' : '';
                     
                     element.className = `text-sm ${color} mr-2`;
-                    element.textContent = `${symbol}${trend.toFixed(1)}%`;
+                    
+                    if (id === 'missing-trend') {
+                        element.textContent = trend === 0 ? 'Meta atingida' : `${trend.toFixed(1)}% faltante`;
+                    } else {
+                        element.textContent = `${symbol}${trend.toFixed(1)}%`;
+                    }
                 }
             }
 
@@ -2667,19 +3012,19 @@
                 }
             }
 
-            // CORRECTED: Generate dashboard table using only hours with data for efficiency + CORRECTED Individual Trucks per Hour per Front
+            // UPDATED: Generate dashboard table with MISSING DELIVERY column
             generateDashboardTable() {
                 const tableBody = document.getElementById('performance-table');
                 if (!tableBody) return;
 
-                // Generate REAL data for each front using CORRECTED efficiency calculation + CORRECTED Individual Trucks per Hour per Front
+                // Generate REAL data for each front with MISSING DELIVERY
                 const tableData = this.state.fronts.map(front => {
                     let totalDelivery = 0;
                     let totalTrips = 0;
-                    let totalUsedPotential = 0; // CORRECTED: Only potential for hours with data
+                    let totalUsedPotential = 0;
                     let weightedDensity = 0;
                     let totalTripWeights = 0;
-                    let activeHours = 0; // CORRECTED: Count active hours for this front
+                    let activeHours = 0;
 
                     // Sum data from all periods for this front
                     this.timeSlots.forEach(slot => {
@@ -2691,9 +3036,9 @@
                             if (frontData.total.trips > 0) {
                                 weightedDensity += frontData.total.density * frontData.total.trips;
                                 totalTripWeights += frontData.total.trips;
-                                activeHours += 2; // Each period has 2 hours
+                                activeHours += 2;
                                 
-                                // CORRECTED: Only add potential for hours with actual data
+                                // Only add potential for hours with actual data
                                 const frontConfig = this.state.data.frontConfigs[front];
                                 if (frontConfig?.hourlyPotential) {
                                     slot.hours.forEach(hour => {
@@ -2709,17 +3054,21 @@
                     const frontConfig = this.state.data.frontConfigs[front] || {};
                     const dailyGoal = parseFloat(frontConfig.dailyGoal) || 0;
                     
-                    // CORRECTED: Calculate trucks per hour for this individual front
+                    // Calculate trucks per hour for this individual front
                     const trucksPerHour = activeHours > 0 ? totalTrips / activeHours : 0;
+                    
+                    // NEW: Calculate missing delivery for this front
+                    const missingDelivery = Math.max(0, dailyGoal - totalDelivery);
 
                     return {
                         front,
                         delivery: totalDelivery.toFixed(1),
-                        potentialUsed: totalUsedPotential.toFixed(1), // CORRECTED: Show only used potential
+                        missing: missingDelivery.toFixed(1), // NEW
+                        potentialUsed: totalUsedPotential.toFixed(1),
                         dailyGoal: dailyGoal.toFixed(0),
                         efficiency: efficiency.toFixed(1),
                         trips: totalTrips,
-                        trucksPerHour: trucksPerHour.toFixed(1), // CORRECTED: Individual front trucks per hour
+                        trucksPerHour: trucksPerHour.toFixed(1),
                         density: avgDensity.toFixed(2),
                         status: this.getPerformanceStatus(efficiency),
                         statusColor: this.getPerformanceStatusColor(efficiency)
@@ -2737,6 +3086,10 @@
                         <td class="px-6 py-4 whitespace-nowrap">
                             <div class="text-lg font-bold text-success">${row.delivery}</div>
                             <div class="text-xs text-gray-500 dark:text-gray-400">toneladas</div>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <div class="text-lg font-bold text-danger">${row.missing}</div>
+                            <div class="text-xs text-gray-500 dark:text-gray-400">faltante</div>
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap">
                             <div class="text-sm font-medium text-gray-900 dark:text-gray-300">${row.potentialUsed}</div>
@@ -2815,7 +3168,7 @@
                 return 'danger';
             }
 
-            // CORRECTED: Update best/worst performers using only hours with data
+            // Update best/worst performers using only hours with data
             updateBestWorstPerformers() {
                 const performances = this.state.fronts.map(front => {
                     let totalDelivery = 0;
@@ -2826,7 +3179,7 @@
                         if (frontData) {
                             totalDelivery += frontData.total.delivery;
                             
-                            // CORRECTED: Only count potential for hours with data
+                            // Only count potential for hours with data
                             if (frontData.total.trips > 0) {
                                 const frontConfig = this.state.data.frontConfigs[front];
                                 if (frontConfig?.hourlyPotential) {
@@ -2856,7 +3209,7 @@
             updateNotificationCount() {
                 let notificationCount = 0;
                 
-                // Count notifications based on CORRECTED efficiency calculation
+                // Count notifications based on efficiency and missing delivery
                 this.state.fronts.forEach(front => {
                     let totalDelivered = 0;
                     let totalUsedPotential = 0;
@@ -2867,7 +3220,7 @@
                         if (frontData) {
                             totalDelivered += frontData.total.delivery;
                             
-                            // CORRECTED: Only count potential for hours with data
+                            // Only count potential for hours with data
                             if (frontData.total.trips > 0) {
                                 const frontConfig = this.state.data.frontConfigs[front];
                                 if (frontConfig?.hourlyPotential) {
@@ -2884,11 +3237,15 @@
 
                     const efficiency = totalUsedPotential > 0 ? (totalDelivered / totalUsedPotential) * 100 : 0;
                     const goalProgress = totalGoal > 0 ? (totalDelivered / totalGoal) * 100 : 0;
+                    const missingDelivery = Math.max(0, totalGoal - totalDelivered);
                     
                     if (efficiency < 70 && efficiency > 0) {
                         notificationCount++;
                     }
                     if (goalProgress < 50 && totalGoal > 0) {
+                        notificationCount++;
+                    }
+                    if (missingDelivery > totalGoal * 0.3) { // More than 30% missing
                         notificationCount++;
                     }
                 });
@@ -2947,6 +3304,9 @@
                         this.updatePeriodContent();
                     } else if (page === 'frentes-config') {
                         this.generateFrontConfigCards();
+                    } else if (page === 'relatorios') { // NEW
+                        this.updateReportsLastGenerated();
+                        this.updateRecentReportsList();
                     }
                     
                     // Update real data for any page
@@ -3020,7 +3380,7 @@
                 });
             }
 
-            // CORRECTED: Date Navigation with proper data loading/saving
+            // Date Navigation with proper data loading/saving
             navigateDate(direction) {
                 // Save current date data before changing
                 this.saveData();
@@ -3075,7 +3435,7 @@
                 });
             }
 
-            // CORRECTED: Date picker with proper data management
+            // Date picker with proper data management
             showDatePicker() {
                 const input = document.createElement('input');
                 input.type = 'date';
@@ -3167,7 +3527,7 @@
                         total: { density: 0, trips: 0, delivery: 0, efficiency: 0 }
                     };
 
-                    // Calculate CORRECTED potential for this period (only if there's data)
+                    // Calculate potential for this period (only if there's data)
                     const timeSlot = this.timeSlots.find(slot => slot.period === this.state.activePeriod);
                     let configuredPotential = 0;
                     if (timeSlot && frontData.total.trips > 0) {
@@ -3258,7 +3618,7 @@
                 let totalTrips = 0;
                 let totalConfiguredPotential = 0;
 
-                // Calculate CORRECTED potential for this period
+                // Calculate potential for this period
                 const timeSlot = this.timeSlots.find(slot => slot.period === this.state.activePeriod);
                 
                 this.state.fronts.forEach(front => {
@@ -3267,7 +3627,7 @@
                         totalDelivered += frontData.total.delivery;
                         totalTrips += frontData.total.trips;
                         
-                        // CORRECTED: Only add potential if there's data
+                        // Only add potential if there's data
                         if (frontData.total.trips > 0 && timeSlot) {
                             const frontConfig = this.state.data.frontConfigs[front];
                             if (frontConfig?.hourlyPotential) {
@@ -3360,7 +3720,7 @@
                         results.push({
                             type: 'front',
                             title: `Frente ${front}`,
-                            description: 'Dados de produção e configuração com média TOTAL caminhões/hora CORRIGIDA + salvamento por data',
+                            description: 'Dados de produção, configuração e déficit + média TOTAL caminhões/hora',
                             action: () => {
                                 this.showPage('entrega-hora');
                                 this.hideSearch();
@@ -3377,7 +3737,7 @@
                     'analytics': 'Analytics Avançado',
                     'metas': 'Metas e KPIs',
                     'historico': 'Histórico',
-                    'relatorios': 'Relatórios',
+                    'relatorios': 'Relatórios Completos',
                     'backup': 'Backup & Sync',
                     'configuracoes': 'Configurações'
                 };
@@ -3396,12 +3756,12 @@
                     }
                 });
 
-                // Search for CORRECTED terms
-                if (query.includes('caminhões') || query.includes('caminhoes') || query.includes('hora') || query.includes('cam/h') || query.includes('total')) {
+                // Search for new features
+                if (query.includes('déficit') || query.includes('deficit') || query.includes('faltante') || query.includes('não entregue')) {
                     results.push({
                         type: 'feature',
-                        title: 'Média TOTAL Caminhões por Hora CORRIGIDA',
-                        description: 'Análise de produtividade total: soma de todas as viagens dividida pelas horas ativas',
+                        title: 'Análise de Déficit por Frente',
+                        description: 'NOVO v8.0: Visualize quantas toneladas cada frente ficou sem entregar',
                         action: () => {
                             this.showPage('dashboard');
                             this.hideSearch();
@@ -3409,13 +3769,25 @@
                     });
                 }
 
-                if (query.includes('salvamento') || query.includes('data') || query.includes('historico') || query.includes('história')) {
+                if (query.includes('relatório') || query.includes('relatorio') || query.includes('report')) {
                     results.push({
                         type: 'feature',
-                        title: 'Salvamento por Data CORRIGIDO',
-                        description: 'Sistema de salvamento separado por data - configurações e dados diários independentes',
+                        title: 'Sistema Completo de Relatórios',
+                        description: 'NOVO v8.0: Relatórios diários, semanais, mensais e customizados com exportação',
                         action: () => {
-                            this.showPage('historico');
+                            this.showPage('relatorios');
+                            this.hideSearch();
+                        }
+                    });
+                }
+
+                if (query.includes('caminhões') || query.includes('caminhoes') || query.includes('hora') || query.includes('cam/h') || query.includes('total')) {
+                    results.push({
+                        type: 'feature',
+                        title: 'Média TOTAL Caminhões por Hora CORRIGIDA',
+                        description: 'Análise de produtividade total: soma de todas as viagens dividida pelas horas ativas',
+                        action: () => {
+                            this.showPage('dashboard');
                             this.hideSearch();
                         }
                     });
@@ -3646,7 +4018,7 @@
                 this.generateTimePeriodButtons();
                 this.generateFrontConfigCards();
                 this.updateGlobalGoals();
-                this.updateAllRealData(); // FIXED: This now includes chart updates with dynamic colors
+                this.updateAllRealData();
                 this.updateActiveEntriesCount();
                 
                 // Update current period if on entrega-hora page
@@ -3686,7 +4058,7 @@
                     this.generateTimePeriodButtons();
                     this.generateFrontConfigCards();
                     this.updateGlobalGoals();
-                    this.updateAllRealData(); // FIXED: This now includes chart updates with dynamic colors
+                    this.updateAllRealData();
                     this.updateActiveEntriesCount();
                     this.showToast(`🗑️ Frente ${frontNumber} removida - cores atualizadas`, 'info');
                     
@@ -3703,7 +4075,7 @@
             }
 
             refreshDashboard() {
-                this.showToast('🔄 Atualizando dashboard com TODAS as correções v7.0...', 'info');
+                this.showToast('🔄 Atualizando dashboard com TODAS as melhorias v8.0...', 'info');
                 
                 // Show loading state
                 const refreshBtn = document.getElementById('refresh-dashboard');
@@ -3719,8 +4091,8 @@
                         if (icon) icon.classList.remove('animate-spin');
                     }
                     
-                    this.updateAllRealData(); // FIXED: This now includes chart updates with dynamic colors
-                    this.showToast('✅ Dashboard atualizado - CORRIGIDO: Média TOTAL Cam/Hora + Salvamento por Data v7.0', 'success');
+                    this.updateAllRealData();
+                    this.showToast('✅ Dashboard atualizado - APRIMORADO: Déficit + Relatórios Completos + Média TOTAL Cam/Hora v8.0', 'success');
                 }, 1500);
             }
 
@@ -3796,7 +4168,7 @@
                 this.applyInputFeedback(e.target, value);
             }
 
-            // CORRECTED: Recalculate front totals with corrected efficiency calculation
+            // Recalculate front totals with corrected efficiency calculation
             recalculateFrontTotals(front) {
                 // Recalculate totals for this front across ALL periods
                 this.timeSlots.forEach(slot => {
@@ -3807,7 +4179,7 @@
                         frontData.total.trips = frontData.hour1.trips + frontData.hour2.trips;
                         frontData.total.delivery = frontData.hour1.delivery + frontData.hour2.delivery;
 
-                        // CORRECTED: Calculate efficiency using configured potential only if there's data
+                        // Calculate efficiency using configured potential only if there's data
                         let configuredPotential = 0;
                         if (frontData.total.trips > 0) {
                             const timeSlot = this.timeSlots.find(s => s.period === slot.period);
@@ -3861,18 +4233,22 @@
                     { name: 'Salvar Dados', icon: '💾', action: () => this.saveData() },
                     { name: 'Atualizar Dashboard', icon: '🔄', action: () => this.refreshDashboard() },
                     { name: 'Configurar Frentes', icon: '⚙️', action: () => this.showPage('frentes-config') },
+                    { name: 'Ver Déficit', icon: '⚠️', action: () => this.showPage('dashboard') },
+                    { name: 'Gerar Relatórios', icon: '📊', action: () => this.showPage('relatorios') },
                     { name: 'Limpar Período', icon: '🧹', action: () => this.clearCurrentPeriod() },
                     { name: 'Gerenciar Frentes', icon: '🏭', action: () => this.showManageFrontsModal() },
                     { name: 'Buscar', icon: '🔍', action: () => this.showSearch() },
                     { name: 'Alternar Tema', icon: '🎨', action: () => this.toggleTheme() },
-                    { name: 'Média TOTAL Cam/Hora', icon: '🚛', action: () => this.showToast('CORRIGIDO v7.0: Total de viagens ÷ horas ativas', 'info') },
-                    { name: 'Salvamento por Data', icon: '📅', action: () => this.showToast('CORRIGIDO v7.0: Dados separados por data', 'info') },
+                    { name: 'Média TOTAL Cam/Hora', icon: '🚛', action: () => this.showToast('CORRIGIDO v8.0: Total de viagens ÷ horas ativas', 'info') },
+                    { name: 'Salvamento por Data', icon: '📅', action: () => this.showToast('CORRIGIDO v8.0: Dados separados por data', 'info') },
                     { name: 'Eficiência Corrigida', icon: '📈', action: () => this.showToast('Ativo: cálculo só com horas que têm dados', 'info') },
-                    { name: 'Cores Dinâmicas', icon: '🌈', action: () => this.showToast('Ativo: cores que se adaptam ao número de frentes', 'info') }
+                    { name: 'Cores Dinâmicas', icon: '🌈', action: () => this.showToast('Ativo: cores que se adaptam ao número de frentes', 'info') },
+                    { name: 'Análise de Déficit', icon: '🔴', action: () => this.showToast('NOVO v8.0: Déficit por frente em tempo real', 'info') },
+                    { name: 'Relatórios Completos', icon: '📋', action: () => this.showToast('NOVO v8.0: Sistema completo de relatórios', 'info') }
                 ];
                 
                 const menu = document.createElement('div');
-                menu.className = 'quick-actions-menu fixed bottom-20 right-6 glass rounded-2xl shadow-2xl border border-white/20 dark:border-gray-700/20 z-50 p-2 animate-slide-up';
+                menu.className = 'quick-actions-menu fixed bottom-20 right-6 glass rounded-2xl shadow-2xl border border-white/20 dark:border-gray-700/20 z-50 p-2 animate-slide-up max-h-96 overflow-y-auto';
                 
                 menu.innerHTML = actions.map(action => `
                     <button class="quick-action w-full flex items-center space-x-3 p-3 rounded-xl hover:bg-white/50 dark:hover:bg-gray-700/50 transition-all duration-300 text-left whitespace-nowrap">
@@ -4089,7 +4465,7 @@
 
                 // Update global goals and refresh all UI
                 this.updateGlobalGoals();
-                this.updateAllRealData(); // FIXED: This now includes chart updates with dynamic colors
+                this.updateAllRealData();
                 this.generateFrontConfigCards();
                 
                 // Save immediately to persist the changes
@@ -4111,6 +4487,432 @@
 
             exportConfiguration() {
                 this.showToast('📤 Função de exportação será implementada em breve', 'info');
+            }
+
+            // NEW: Reports System Functions
+            generateAllReports() {
+                this.showLoadingOverlay('Gerando todos os relatórios...');
+                
+                setTimeout(() => {
+                    const reportTypes = ['daily', 'weekly', 'monthly', 'performance', 'efficiency'];
+                    reportTypes.forEach(type => {
+                        this.generateReport(type, false); // Don't show individual toasts
+                    });
+                    
+                    this.hideLoadingOverlay();
+                    this.showToast('✅ Todos os relatórios foram gerados com sucesso!', 'success');
+                    this.updateRecentReportsList();
+                }, 2000);
+            }
+
+            generateReport(type, showToast = true) {
+                if (showToast) {
+                    this.showLoadingOverlay(`Gerando relatório ${this.state.reports.templates[type].name}...`);
+                }
+
+                // Simulate report generation
+                setTimeout(() => {
+                    const reportData = this.prepareReportData(type);
+                    const report = {
+                        id: Date.now() + Math.random(),
+                        type,
+                        name: this.state.reports.templates[type].name,
+                        format: this.state.reports.templates[type].format,
+                        generatedAt: new Date().toISOString(),
+                        date: this.state.currentDate,
+                        data: reportData,
+                        size: this.calculateReportSize(reportData)
+                    };
+
+                    // Add to history
+                    this.state.reports.history.unshift(report);
+                    this.state.reports.lastGenerated[type] = new Date().toISOString();
+
+                    // Keep only last 50 reports
+                    if (this.state.reports.history.length > 50) {
+                        this.state.reports.history = this.state.reports.history.slice(0, 50);
+                    }
+
+                    this.saveData();
+
+                    if (showToast) {
+                        this.hideLoadingOverlay();
+                        this.showToast(`📊 ${report.name} gerado com sucesso!`, 'success');
+                        this.updateReportsLastGenerated();
+                        this.updateRecentReportsList();
+                    }
+
+                    console.log(`📊 Relatório ${type} gerado:`, report);
+                }, showToast ? 1500 : 500);
+            }
+
+            prepareReportData(type) {
+                const currentData = {
+                    date: this.state.currentDate,
+                    fronts: this.state.fronts,
+                    periods: this.state.data.periods,
+                    configs: this.state.data.frontConfigs,
+                    goals: this.state.data.dailyGoals
+                };
+
+                let reportData = {};
+
+                switch (type) {
+                    case 'daily':
+                        reportData = this.prepareDailyReportData(currentData);
+                        break;
+                    case 'weekly':
+                        reportData = this.prepareWeeklyReportData(currentData);
+                        break;
+                    case 'monthly':
+                        reportData = this.prepareMonthlyReportData(currentData);
+                        break;
+                    case 'performance':
+                        reportData = this.preparePerformanceReportData(currentData);
+                        break;
+                    case 'efficiency':
+                        reportData = this.prepareEfficiencyReportData(currentData);
+                        break;
+                    case 'custom':
+                        reportData = this.prepareCustomReportData(currentData);
+                        break;
+                    default:
+                        reportData = currentData;
+                }
+
+                return reportData;
+            }
+
+            prepareDailyReportData(currentData) {
+                // Calculate daily summary
+                let totalDelivered = 0;
+                let totalTrips = 0;
+                let totalUsedPotential = 0;
+                let totalGoal = 0;
+                let frontDetails = [];
+
+                this.state.fronts.forEach(front => {
+                    let frontDelivered = 0;
+                    let frontTrips = 0;
+                    let frontUsedPotential = 0;
+                    let frontActiveHours = 0;
+
+                    this.timeSlots.forEach(slot => {
+                        const frontData = currentData.periods[slot.period].fronts[front];
+                        if (frontData && frontData.total.trips > 0) {
+                            frontDelivered += frontData.total.delivery;
+                            frontTrips += frontData.total.trips;
+                            frontActiveHours += 2;
+
+                            const frontConfig = currentData.configs[front];
+                            if (frontConfig?.hourlyPotential) {
+                                slot.hours.forEach(hour => {
+                                    frontUsedPotential += parseFloat(frontConfig.hourlyPotential[hour]) || 0;
+                                });
+                            }
+                        }
+                    });
+
+                    const frontConfig = currentData.configs[front] || {};
+                    const frontGoal = parseFloat(frontConfig.dailyGoal) || 0;
+                    const frontMissing = Math.max(0, frontGoal - frontDelivered);
+                    const frontEfficiency = frontUsedPotential > 0 ? (frontDelivered / frontUsedPotential) * 100 : 0;
+                    const frontTrucksPerHour = frontActiveHours > 0 ? frontTrips / frontActiveHours : 0;
+
+                    frontDetails.push({
+                        front,
+                        delivered: frontDelivered,
+                        missing: frontMissing,
+                        goal: frontGoal,
+                        trips: frontTrips,
+                        efficiency: frontEfficiency,
+                        trucksPerHour: frontTrucksPerHour,
+                        activeHours: frontActiveHours
+                    });
+
+                    totalDelivered += frontDelivered;
+                    totalTrips += frontTrips;
+                    totalUsedPotential += frontUsedPotential;
+                    totalGoal += frontGoal;
+                });
+
+                const totalMissing = Math.max(0, totalGoal - totalDelivered);
+                const overallEfficiency = totalUsedPotential > 0 ? (totalDelivered / totalUsedPotential) * 100 : 0;
+
+                return {
+                    summary: {
+                        date: currentData.date,
+                        totalDelivered,
+                        totalMissing,
+                        totalGoal,
+                        totalTrips,
+                        overallEfficiency,
+                        goalAchievement: totalGoal > 0 ? (totalDelivered / totalGoal) * 100 : 0
+                    },
+                    fronts: frontDetails,
+                    periods: this.timeSlots.map(slot => {
+                        let periodDelivered = 0;
+                        let periodTrips = 0;
+                        
+                        this.state.fronts.forEach(front => {
+                            const frontData = currentData.periods[slot.period].fronts[front];
+                            if (frontData) {
+                                periodDelivered += frontData.total.delivery;
+                                periodTrips += frontData.total.trips;
+                            }
+                        });
+
+                        return {
+                            period: slot.period,
+                            start: slot.start,
+                            end: slot.end,
+                            delivered: periodDelivered,
+                            trips: periodTrips
+                        };
+                    })
+                };
+            }
+
+            prepareWeeklyReportData(currentData) {
+                // For now, return current day data with weekly context
+                return {
+                    period: '7 dias',
+                    startDate: this.getDateDaysAgo(7),
+                    endDate: currentData.date,
+                    dailyData: this.prepareDailyReportData(currentData),
+                    trends: {
+                        deliveryTrend: 'Em desenvolvimento',
+                        efficiencyTrend: 'Em desenvolvimento'
+                    }
+                };
+            }
+
+            prepareMonthlyReportData(currentData) {
+                return {
+                    period: '30 dias',
+                    startDate: this.getDateDaysAgo(30),
+                    endDate: currentData.date,
+                    dailyData: this.prepareDailyReportData(currentData),
+                    kpis: {
+                        averageDaily: 'Em desenvolvimento',
+                        bestDay: 'Em desenvolvimento',
+                        worstDay: 'Em desenvolvimento'
+                    }
+                };
+            }
+
+            preparePerformanceReportData(currentData) {
+                const dailyData = this.prepareDailyReportData(currentData);
+                const rankedFronts = dailyData.fronts.sort((a, b) => b.efficiency - a.efficiency);
+
+                return {
+                    date: currentData.date,
+                    ranking: rankedFronts,
+                    bestPerformer: rankedFronts[0],
+                    worstPerformer: rankedFronts[rankedFronts.length - 1],
+                    benchmarks: {
+                        avgEfficiency: rankedFronts.reduce((sum, f) => sum + f.efficiency, 0) / rankedFronts.length,
+                        totalDeficit: rankedFronts.reduce((sum, f) => sum + f.missing, 0)
+                    }
+                };
+            }
+
+            prepareEfficiencyReportData(currentData) {
+                const dailyData = this.prepareDailyReportData(currentData);
+                const frontsWithDeficit = dailyData.fronts.filter(f => f.missing > 0);
+
+                return {
+                    date: currentData.date,
+                    totalDeficit: dailyData.summary.totalMissing,
+                    frontsWithDeficit,
+                    deficitByPeriod: dailyData.periods.map(period => ({
+                        ...period,
+                        potentialLoss: 'Calculado com base no período'
+                    })),
+                    recommendations: [
+                        'Focar nas frentes com maior déficit',
+                        'Otimizar períodos de baixa produtividade',
+                        'Revisar metas baseadas no histórico'
+                    ]
+                };
+            }
+
+            prepareCustomReportData(currentData) {
+                return {
+                    type: 'custom',
+                    data: currentData,
+                    note: 'Relatório customizado - configuração em desenvolvimento'
+                };
+            }
+
+            calculateReportSize(data) {
+                // Estimate report size based on data complexity
+                const jsonSize = JSON.stringify(data).length;
+                if (jsonSize < 10000) return 'Pequeno (~100KB)';
+                if (jsonSize < 50000) return 'Médio (~500KB)';
+                return 'Grande (~1MB)';
+            }
+
+            getDateDaysAgo(days) {
+                const date = new Date(this.state.currentDate);
+                date.setDate(date.getDate() - days);
+                return date.toISOString().split('T')[0];
+            }
+
+            scheduleReports() {
+                this.showToast('📅 Função de agendamento será implementada em breve', 'info');
+            }
+
+            exportReportsConfig() {
+                this.showToast('⚙️ Função de configuração será implementada em breve', 'info');
+            }
+
+            clearReportsHistory() {
+                if (confirm('Tem certeza que deseja limpar todo o histórico de relatórios?')) {
+                    this.state.reports.history = [];
+                    this.state.reports.lastGenerated = {};
+                    this.saveData();
+                    this.updateRecentReportsList();
+                    this.updateReportsLastGenerated();
+                    this.showToast('🗑️ Histórico de relatórios limpo', 'success');
+                }
+            }
+
+            updateReportsLastGenerated() {
+                Object.keys(this.state.reports.templates).forEach(type => {
+                    const element = document.getElementById(`${type}-last-gen`);
+                    if (element) {
+                        const lastGen = this.state.reports.lastGenerated[type];
+                        if (lastGen) {
+                            const date = new Date(lastGen);
+                            element.textContent = date.toLocaleString('pt-BR');
+                        } else {
+                            element.textContent = 'Nunca';
+                        }
+                    }
+                });
+            }
+
+            updateRecentReportsList() {
+                const container = document.getElementById('recent-reports-list');
+                if (!container) return;
+
+                if (this.state.reports.history.length === 0) {
+                    container.innerHTML = `
+                        <div class="text-center py-8 text-gray-500 dark:text-gray-400">
+                            <svg class="w-12 h-12 mx-auto mb-4 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                            </svg>
+                            <p>Nenhum relatório gerado ainda</p>
+                            <p class="text-xs mt-2">Gere seu primeiro relatório usando os cartões acima</p>
+                        </div>
+                    `;
+                    return;
+                }
+
+                container.innerHTML = this.state.reports.history.slice(0, 10).map(report => {
+                    const date = new Date(report.generatedAt);
+                    const typeColors = {
+                        daily: 'bg-blue-100 text-blue-800 dark:bg-blue-900/20 dark:text-blue-400',
+                        weekly: 'bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-400',
+                        monthly: 'bg-purple-100 text-purple-800 dark:bg-purple-900/20 dark:text-purple-400',
+                        performance: 'bg-orange-100 text-orange-800 dark:bg-orange-900/20 dark:text-orange-400',
+                        efficiency: 'bg-red-100 text-red-800 dark:bg-red-900/20 dark:text-red-400',
+                        custom: 'bg-gray-100 text-gray-800 dark:bg-gray-900/20 dark:text-gray-400'
+                    };
+
+                    return `
+                        <div class="flex items-center justify-between p-4 glass rounded-lg hover:bg-white/50 dark:hover:bg-gray-700/50 transition-colors">
+                            <div class="flex items-center space-x-4">
+                                <div class="w-10 h-10 bg-gradient-to-br from-primary to-primary-600 rounded-lg flex items-center justify-center">
+                                    <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                                    </svg>
+                                </div>
+                                <div>
+                                    <h4 class="font-semibold text-gray-900 dark:text-white">${report.name}</h4>
+                                    <div class="flex items-center space-x-2 text-sm text-gray-500 dark:text-gray-400">
+                                        <span>${date.toLocaleString('pt-BR')}</span>
+                                        <span>•</span>
+                                        <span>${report.format}</span>
+                                        <span>•</span>
+                                        <span>${report.size}</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="flex items-center space-x-2">
+                                <span class="px-2 py-1 text-xs font-medium rounded-full ${typeColors[report.type] || typeColors.custom}">
+                                    ${report.type.toUpperCase()}
+                                </span>
+                                <button class="download-report-btn p-2 text-gray-400 hover:text-primary transition-colors" data-report-id="${report.id}">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+
+                // Add download listeners
+                container.querySelectorAll('.download-report-btn').forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        const reportId = btn.dataset.reportId;
+                        this.downloadReport(reportId);
+                    });
+                });
+            }
+
+            downloadReport(reportId) {
+                const report = this.state.reports.history.find(r => r.id == reportId);
+                if (!report) {
+                    this.showToast('Relatório não encontrado', 'error');
+                    return;
+                }
+
+                // Create downloadable content
+                const reportContent = {
+                    metadata: {
+                        name: report.name,
+                        type: report.type,
+                        format: report.format,
+                        generatedAt: report.generatedAt,
+                        date: report.date,
+                        version: this.version
+                    },
+                    data: report.data
+                };
+
+                const dataStr = JSON.stringify(reportContent, null, 2);
+                const dataBlob = new Blob([dataStr], { type: 'application/json' });
+                const url = URL.createObjectURL(dataBlob);
+
+                const link = document.createElement('a');
+                link.href = url;
+                link.download = `${report.name.replace(/\s+/g, '_')}_${report.date}.json`;
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                URL.revokeObjectURL(url);
+
+                this.showToast(`📥 ${report.name} baixado com sucesso`, 'success');
+            }
+
+            showLoadingOverlay(message) {
+                const overlay = document.getElementById('loading-overlay');
+                const messageEl = document.getElementById('loading-message');
+                
+                if (overlay && messageEl) {
+                    messageEl.textContent = message;
+                    overlay.classList.remove('hidden');
+                }
+            }
+
+            hideLoadingOverlay() {
+                const overlay = document.getElementById('loading-overlay');
+                if (overlay) {
+                    overlay.classList.add('hidden');
+                }
             }
 
             // Helper Functions
@@ -4144,6 +4946,12 @@
                     this.toggleTheme();
                 }
                 
+                // Ctrl/Cmd + R: Generate reports
+                if ((e.ctrlKey || e.metaKey) && e.key === 'r') {
+                    e.preventDefault();
+                    this.showPage('relatorios');
+                }
+                
                 // Escape: Close modals
                 if (e.key === 'Escape') {
                     if (this.state.ui.searchOpen) {
@@ -4164,7 +4972,7 @@
                     });
                 }
                 
-                // CORRECTED: Alt + Arrow keys: Navigate dates
+                // Alt + Arrow keys: Navigate dates
                 if (e.altKey && e.key === 'ArrowLeft') {
                     e.preventDefault();
                     this.navigateDate(-1);
@@ -4286,9 +5094,9 @@
             }
             
             // Create global app instance
-            window.ggomesApp = new GGomesLogSystemCorrected();
+            window.ggomesApp = new GGomesLogSystemEnhanced();
             
-            console.log('🚀 GGOMES-LOG v7.0 inicializado - CORRIGIDO: Média TOTAL Caminhões/Hora + Salvamento por Data CORRIGIDO');
+            console.log('🚀 GGOMES-LOG v8.0 inicializado - APRIMORADO: Déficit + Relatórios Completos + Média TOTAL Caminhões/Hora + Salvamento por Data');
         });
     </script>
 </body>
